@@ -9,5 +9,6 @@ router.get('/', function(req, res, next) {
 router.use('/bookstore', require('./bookstore'));
 router.use('/mypage', require('./mypage'));
 router.use('/review', require('./review'));
+router.use('/activity', require('./activity'));
 
 module.exports = router;
