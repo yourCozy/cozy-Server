@@ -7,10 +7,15 @@ router.get('/', function(req, res, next) {
 });
 
 router.use('/bookstore', require('./bookstore'));
+
 router.use('/mypage', require('./mypage'));
+
 router.use('/review', require('./review'));
+
 router.use('/activity', require('./activity'));
+
 router.use('/user', require('./user'));
+
 // router.use('/auth', require('./auth'));
 
 module.exports = router;

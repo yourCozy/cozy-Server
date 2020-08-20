@@ -90,7 +90,7 @@ const bookstore = {
         }
     },
     searchByKeyword : async (req, res) => {
-        const userIdx = req.decoded.userIdx;
+        // const userIdx = req.decoded.userIdx;
         const keyword = decodeURI(req.params.keyword);
         console.log('search keyword : ', keyword);
 

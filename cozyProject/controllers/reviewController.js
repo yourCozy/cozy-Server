@@ -50,7 +50,7 @@ const review = {
         }
     },
     showReviewsByBookstore: async(req, res)=>{
-        const userIdx = req.decoded.userIdx;
+        // const userIdx = req.decoded.userIdx;
         const bookstoreIdx = req.params.bookstoreIdx;
         try{
             const result = await ReviewModel.showReviews(bookstoreIdx);
@@ -64,7 +64,7 @@ const review = {
         }
     },
     showTwoReviewsByBookstore: async(req, res) => {
-        const userIdx = req.decoded.userIdx;
+        // const userIdx = req.decoded.userIdx;
         const bookstoreIdx = req.params.bookstoreIdx;
         try {
             const result = await ReviewModel.showReviews(bookstoreIdx);

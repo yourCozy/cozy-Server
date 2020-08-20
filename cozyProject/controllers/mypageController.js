@@ -4,6 +4,9 @@ const resMessage = require('../modules/resMessage');
 const util = require('../modules/util');
 
 const mypage = {
+    registerRecommendation: async (req, res) => {
+
+    },
     showInterest : async (req, res) => {
         const userIdx = req.decoded.userIdx;
 
