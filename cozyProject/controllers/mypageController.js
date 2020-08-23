@@ -5,6 +5,7 @@ const util = require('../modules/util');
 
 const mypage = {
     registerRecommendation: async (req, res) => {
+        // 온보딩에서 취향 선택을 할 시에는 해시태그+문화활동 합쳐서 받음. 제일 처음에 뜨는 추천 탭에는 사용자의 취향선택과 가장많이 중복되는 책방부터 출력.
 
     },
     showInterest : async (req, res) => {
