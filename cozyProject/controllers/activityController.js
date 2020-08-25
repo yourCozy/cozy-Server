@@ -9,27 +9,54 @@ const multer = require('../modules/multer');
 
 const activity = {
     showRecommendation: async (req, res) => {
-
+        
     },
     showActivities: async (req, res) => {
 
     },
-    showActivitiesByCategory: async (req, res) => {
-        const categoryIdx = req.params.categoryIdx;
-        const userIdx = req.decoded.userIdx; // 북마크 여부때문에 필요
-        // console.log('categoryIdx: ',categoryIdx);
-        try {
-            const activitiesByCategory = await ActivityModel.showActivitiesByCategory(userIdx, categoryIdx);
-            if (!activitiesByCategory.length) {
-                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+    registerActivity: async (req, res) => {
+        const {bookstoreIdx, activityName, categoryIdx, deadline} = req.body;
+
+        try{
+            if (!bookstoreIdx || !activityName || !categoryIdx) {
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, activitiesByCategory));
+            const idx = await ActivityModel.registerActivity(bookstoreIdx, activityName, categoryIdx, deadline);
+            
+            if(idx === -1){
+                res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.ERROR_IN_INSERT_REVIEW));
+            }else{
+                res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.INSERT_REVIEW_SUCCESS, idx));
+            }
+        }catch(err){
+            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+        }
+    },
+    showActivitiesByLatest: async (req, res) => {
+        const categoryIdx = req.params.categoryIdx;
+
+        try {
+            const activitiesByLatest = await ActivityModel.showActivitiesByLatest(categoryIdx);
+            if (!activitiesByLatest.length) {
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_ACT_DATA));
+            }
+            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByLatest));
         } catch (err) {
             res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
     },
-    showActivitiesByFilter: async (req, res) => {
-        
+    showActivitiesByDeadline: async (req, res) => {
+        const categoryIdx = req.params.categoryIdx;
+
+        try {
+            const activitiesByDeadline = await ActivityModel.showActivitiesByDeadline(categoryIdx);
+            if (!activitiesByDeadline.length) {
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_ACT_DATA));
+            }
+            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByDeadline));
+        } catch (err) {
+            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+        }
     }
 }
 

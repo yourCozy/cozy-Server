@@ -36,9 +36,13 @@ module.exports = {
     // 북마크 관련
     BOOKMARK_SUCCESS: '북마크 체크/해제 성공',
 
-    // 데이터 관련
+    // 서점 데이터 관련
     NO_DATA: '서점 리스트가 없습니다.',
     READ_DATA_SUCCESS: '서점 리스트 조회 성공',
+
+    // 활동 데이터 관련
+    NO_ACT_DATA: '활동 리스트가 없습니다.',
+    READ_ACT_DATA_SUCCESS: '활동 리스트 조회 성공',
 
     // cookie 관련
     COOKIE_SUCCESS: '쿠키가 저장되었습니다.',
