@@ -10,6 +10,16 @@ const bookmarksTable = 'bookmarks';
 const userTable = 'user';
 
 const activity = {
+    showActivitiesByBookstore: async (bookstoreIdx) => {
+        const query = `SELECT * FROM ${activityTable} WHERE bookstoreIdx = ${bookstoreIdx}`
+        try {
+            const result = await pool.queryParam(query);
+            return result;
+        } catch (err) {
+            console.log('showActivitiesByBookstore ERROR : ', err);
+            throw err;
+        }
+    },
     registerActivity: async (bookstoreIdx, bookstoreName, categoryIdx, deadline) => {
         const date = moment().format('YYYY년 M월 D일 HH:mm');
         const fields = 'bookstoreIdx, activityName, categoryIdx, createdAt, deadline';

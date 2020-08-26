@@ -11,9 +11,42 @@ const activity = {
     showRecommendation: async (req, res) => {
         
     },
-    showActivities: async (req, res) => {
-
+    showActivitiesByBookstore: async (req, res) => {
+        // const userIdx = req.decoded.userIdx;
+        const bookstoreIdx = req.params.bookstoreIdx;
+        
+        try {
+            const activitiesByBookstore = await ActivityModel.showActivitiesByBookstore(bookstoreIdx);
+            if (!activitiesByBookstore.length) {
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_ACT_DATA));
+            }
+            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByBookstore));
+        } catch (err) {
+            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+        }
     },
+    // 우선 임시로 여기에 넣음
+    /**
+     * category: 18개
+     * 1. 영화 상영
+        2. 글쓰기 모임
+        3. 공간 대여
+        4. 독서 모임
+        5. 심야 책방
+        6. 전시, 공연
+        7. 책 추천
+        8. 위크숍
+        9. 북토크
+        10. 음악 감상
+        11. 낭독 모임
+        12. 묵독 모임
+        13. 필사 모임
+        14. 숙박
+        15. 만들기
+        16. 정기간행물
+        17. 강연
+        18. 마켓
+     */
     registerActivity: async (req, res) => {
         const {bookstoreIdx, activityName, categoryIdx, deadline} = req.body;
 
