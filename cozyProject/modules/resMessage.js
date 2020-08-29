@@ -76,5 +76,8 @@ module.exports = {
     NO_PHOTO: '업데이트할 후기 사진이 없습니다.', 
     REVIEW_UPDATING: '후기 수정 중...',
     
+    //소셜 로그인 관련
+    EMAIL_NICKNAME_MATCH_ERR : '해당 이메일로 회원가입이 되어있습니다.',
+    
     DB_ERROR: 'DB 오류'
 };

@@ -28,4 +28,6 @@ router.post('/findpw', UserController.findPassword);
 */
 router.post('/profile', AuthMiddleware.checkToken, upload.single('profile'), UserController.updateProfile);//
 
+router.get('/kakao', UserController.kakaoToken);
+
 module.exports = router;

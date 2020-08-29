@@ -6,6 +6,7 @@ const util = require('../modules/util');
 const jwt = require('../modules/jwt');
 const mailer = require('../modules/mailer');
 const multer = require('../modules/multer');
+const axios = require('axios');
 
 const user = {
     checkNickname: async (req, res)=>{
@@ -211,6 +212,45 @@ const user = {
             console.log('find PW by email mailer ERR : ',err);
             throw err;
         }
+    },
+    kakaoToken: async(req, res)=>{
+        const accessToken = req.body.accessToken;
+        try{
+            userResponse = await axios({
+                method:"GET",
+                url:"https://kapi.kakao.com/v2/user/me",
+                headers:{
+                    Authorization: `Bearer ${accessToken}`
+                }
+            });
+        }catch(error){
+            console.log('kakaoToken ERR : ', error);
+            throw error;
+        }
+        console.log('=====kakao userResponse data====');
+        //console.log(userResponse);
+        console.log('userResponse.data : ', userResponse.data);
+        const nickname = userResponse.data.properties.nickname;
+        const email = userResponse.data.kakao_account.email;
+
+        const checkEmailResult = await UserModel.checkUserByEmail(email);
+        if(checkEmailResult.length()>0){
+            /* 해당 이메일로 회원가입이 되어 있다 */
+            if(nickname==checkEmailResult.nickname){
+                /*
+                이메일과 닉네임이 모두 맞다면 -> 로그인
+                */
+            }else{
+                /*
+                이메일은 DB에 존재하지만 닉네임과 일치하지 않는다면 -> 이미 존재하는 이메일이라며 오류창 띄우기
+                */
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.EMAIL_NICKNAME_MATCH_ERR));
+            }
+        }else{
+            /* 회원가입 해주기 */
+            
+        }
+        
     }
 }
 module.exports = user;

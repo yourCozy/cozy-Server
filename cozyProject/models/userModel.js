@@ -102,7 +102,7 @@ const user = {
             console.log('update pw by email ERR : ',err);
             throw err;
         }
-    },
+    }
 }
 
 module.exports = user;

@@ -27,10 +27,10 @@ const mypage = {
         
         console.log('userIdx: ',userIdx);
         try{
-            const interest = await MainModel.showInterest(userIdx);
+            const interest = await MypageModel.showInterest(userIdx);
             console.log('interest: ', interest);
             if(interest.length === 0){
-                const nickname = await MainModel.selectNickname(userIdx);
+                const nickname = await MypageModel.selectNickname(userIdx);
                 console.log('nickname: ', nickname);
                 return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.NO_DATA, [{
                     bookstoreIdx: 0,
@@ -54,7 +54,7 @@ const mypage = {
         const bookstoreIdx = req.params.bookstoreIdx;
         const userIdx = req.decoded.userIdx;
         try {
-            const result = await MainModel.updateBookmark(userIdx, bookstoreIdx);
+            const result = await MypageModel.updateBookmark(userIdx, bookstoreIdx);
             let message = '북마크 체크';
             if(result === 0){
                 message = '북마크 해제';
@@ -76,7 +76,7 @@ const mypage = {
         // json 객체 담을 배열
         var cookies=[];
         for(var i=bookstores.length-1;i>=0;i--){
-            cookies.push(await MainModel.selectProfile(bookstores[i]));
+            cookies.push(await MypageModel.selectProfile(bookstores[i]));
         }
         var obj =[];
         cookies.forEach(e => obj.push(e[0]));
