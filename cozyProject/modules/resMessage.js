@@ -5,6 +5,7 @@ module.exports = {
     // 회원가입
     CREATED_USER: '회원 가입 성공',
     DELETE_USER: '회원 탈퇴 성공',
+    CREATED_AND_LOGIN: '회원 가입 후 로그인 성공',
     ALREADY_ID: '이미 사용중인 아이디입니다.',
     ALREADY_EMAIL: '이미 등록된 이메일입니다.',
     AVAILABLE_EMAIL: '가입 가능한 이메일입니다.',
@@ -78,6 +79,6 @@ module.exports = {
     
     //소셜 로그인 관련
     EMAIL_NICKNAME_MATCH_ERR : '해당 이메일로 회원가입이 되어있습니다.',
-    
+    DELETE_SESSION: '세션을 삭제했습니다.(로그아웃 되었습니다.)',
     DB_ERROR: 'DB 오류'
 };

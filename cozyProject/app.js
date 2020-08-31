@@ -4,11 +4,14 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
+const MySQLInfo = require('./config/database.json');
+
 var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
 
 var app = express();
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -18,38 +21,24 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
 
-const mysql = require('mysql');
-const session = require('express-session');
-const MySQLStore = require('express-mysql-session')(session);
-const MySQLInfo = require('./config/database');
-const options = {
+var options = {
   host: MySQLInfo.host,
   port: MySQLInfo.port,
   user: MySQLInfo.user,
   password: MySQLInfo.password,
-  database: MySQLInfo.database,
+  database: MySQLInfo.database
 };
-/*
-app.use(session({
-  secret: '$SeCrEtKeY$',
-  store: new MySQLStore(options),
-  resave: false,
-  saveUninitialized: true
-}));
-*/
-const connection = mysql.createConnection(options);
-const sessionStore = new MySQLStore({options}, connection);
+var sessionStore = new MySQLStore(options);
 
 app.use(session({
   secret: '$SeCrEtKeY$',
-  store: sessionStore,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  store: sessionStore
 }));
-
-
 
 
 app.use('/', indexRouter);

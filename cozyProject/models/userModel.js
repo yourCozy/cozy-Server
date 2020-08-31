@@ -104,7 +104,7 @@ const user = {
         }
     },
     getUserIdxByEmail: async(email)=>{
-        const query = `select userIdx from ${table} where email='${email}'`;
+        const query = `select * from ${table} where email='${email}'`;
         try{
             const result = pool.queryParam(query);
             return result;

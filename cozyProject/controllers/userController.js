@@ -214,61 +214,53 @@ const user = {
         }
     },
     kakaoToken: async (req, res)=>{
-        /*
-        클라에서 accessToken을 받는다.
-        accessToken으로 카카오서버에서 사용자 정보를 가져온다.
-        사용자 정보에 따라 로그인/ 회원가입을 한다.
-        로컬 디비에 저장 후, userIdx를 세션에 저장해 세션도 디비에 저장한다.
-        로그아웃하면 세션 파기.
-        세션에서 userIdx가 있는지 확인하는 미들웨어를 추가하면 될 듯.
-
-         */
-        const accessToken = req.body.accessToken;
-        try{
-            const userResponse = await axios({
-                method:"GET",
-                url:"https://kapi.kakao.com/v2/user/me",
-                headers:{
-                    Authorization: `Bearer ${accessToken}`
-                }
-            });
-
-            console.log('=====kakao userResponse data====');
-            console.log('userResponse.data : ', userResponse.data);
-
-            const nickname = userResponse.data.properties.nickname;
-            const email = userResponse.data.kakao_account.email;
+            const nickname = req.params.data.properties.nickname;
+            const email = req.params.data.kakao_account.email;
 
             const checkEmailResult = await UserModel.checkUserByEmail(email);
             console.log('checkEmailResult : ', checkEmailResult);
+
             if(checkEmailResult.length==1){
                 /* 해당 이메일로 회원가입이 되어 있다 */
-                const userIdx = await UserModel.getUserIdxByEmail(email);
-                req.session.data = userIdx;
-                console.log('req.session : ', req.session);
-                /**
-                 * 세션이 mysql에 save가 안됨
-                 */
-                req.session.save(()=>{
-                    return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.AUTH_SUCCESS, {userIdx}));
-                });
+                console.log('로그인 되었습니다.');
+                const user = await UserModel.getUserIdxByEmail(email);
+
+                
+                //const {token, _} = await jwt.sign(user[0]);
+                //user[0].accessToken = token;
+                
+                req.session.userIdx = user[0].userIdx;
+                req.cookies.session_id = req.sessionID;
+                res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.AUTH_SUCCESS, {
+                    userIdx: user[0].userIdx,
+                    nickname: user[0].nickname,
+                    email: user[0].email,
+                    profile: user[0].profile,
+                    accessToken: user[0].accessToken
+                }));
             }else{
                 /* 회원가입 해주기 */
+                console.log('회원가입 -> 로그인 되었습니다.');
                 const userIdx = await UserModel.signup(nickname, '', '', email);
-                console.log('req.session : ', req.session);
-                req.session.data = userIdx;
-                /**
-                 * 세션이 mysql에 save가 안됨
-                 */
-                req.session.save(()=>{
-                    return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.CREATED_USER, {userIdx : userIdx}));
-                    //res.redirect('/');
-                });
+                const user = await UserModel.getUserIdxByEmail(email);
+                
+                //const {token, _} = await jwt.sign(user[0]);
+                //user[0].accessToken = token;
+
+                req.session.userIdx = user[0].userIdx;
+                res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.CREATED_AND_LOGIN, {
+                    userIdx: user[0].userIdx,
+                    nickname: user[0].nickname,
+                    email: user[0].email,
+                    profile: user[0].profile,
+                    accessToken: user[0].accessToken
+                }));
             }
-        }catch(error){
-            console.log('kakaoToken ERR : ', error);
-            throw error;
-        }
+    },
+    kakaoLogout: async (req, res)=>{
+        req.session.destroy();
+        console.log('session을 삭제했습니다.');
+        res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.DELETE_SESSION));
     }
 }
 module.exports = user;

@@ -16,6 +16,8 @@ router.use('/activity', require('./activity'));
 
 router.use('/user', require('./user'));
 
+router.use('/auth', require('./auth'));
+
 // router.use('/auth', require('./auth'));
 
 module.exports = router;

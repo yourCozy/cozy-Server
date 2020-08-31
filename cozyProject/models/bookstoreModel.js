@@ -6,9 +6,9 @@ const userTable = 'user';
 
 const bookstore = {
     showRecommendation: async (userIdx) => {
-        const query = `SELECT bs.bookstoreIdx, bs.profile, bs.shortIntro, bs.shortIntro2, bs.bookstoreName, bs.location, u.nickname FROM ${bookstoreTable} bs, ${userTable} u 
-                        WHERE bs.profile != 'NULL' 
-                        AND bs.shortIntro != 'NULL' 
+        const query = `SELECT bs.bookstoreIdx, bs.profileImg, bs.shortIntro1, bs.shortIntro2, bs.bookstoreName, bs.location, u.nickname FROM ${bookstoreTable} bs, ${userTable} u 
+                        WHERE bs.profileImg != 'NULL' 
+                        AND bs.shortIntro1 != 'NULL' 
                         AND userIdx = ${userIdx}
                         ORDER BY bs.bookmark DESC LIMIT 8;`;
         try {

@@ -5,7 +5,6 @@ const upload = require('../modules/multer');
 const UserController = require('../controllers/userController');
 const AuthMiddleware = require('../middlewares/auth');
 
-
 router.post('/checknickname', UserController.checkNickname);
 
 router.post('/checkemail', UserController.checkEmail);
@@ -28,6 +27,5 @@ router.post('/findpw', UserController.findPassword);
 */
 router.post('/profile', AuthMiddleware.checkToken, upload.single('profile'), UserController.updateProfile);//
 
-router.get('/kakao', UserController.kakaoToken);
 
 module.exports = router;
