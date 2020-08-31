@@ -9,6 +9,7 @@ var indexRouter = require('./routes/index');
 
 var app = express();
 
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -18,6 +19,38 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+const mysql = require('mysql');
+const session = require('express-session');
+const MySQLStore = require('express-mysql-session')(session);
+const MySQLInfo = require('./config/database');
+const options = {
+  host: MySQLInfo.host,
+  port: MySQLInfo.port,
+  user: MySQLInfo.user,
+  password: MySQLInfo.password,
+  database: MySQLInfo.database,
+};
+/*
+app.use(session({
+  secret: '$SeCrEtKeY$',
+  store: new MySQLStore(options),
+  resave: false,
+  saveUninitialized: true
+}));
+*/
+const connection = mysql.createConnection(options);
+const sessionStore = new MySQLStore({options}, connection);
+
+app.use(session({
+  secret: '$SeCrEtKeY$',
+  store: sessionStore,
+  resave: false,
+  saveUninitialized: false
+}));
+
+
+
 
 app.use('/', indexRouter);
 // app.use('/users', usersRouter);

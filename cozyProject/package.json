@@ -12,6 +12,8 @@
     "crypto": "^1.0.1",
     "debug": "~2.6.9",
     "express": "~4.16.1",
+    "express-mysql-session": "^2.1.4",
+    "express-session": "^1.17.1",
     "http-errors": "~1.6.3",
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.5.1",

@@ -102,6 +102,16 @@ const user = {
             console.log('update pw by email ERR : ',err);
             throw err;
         }
+    },
+    getUserIdxByEmail: async(email)=>{
+        const query = `select userIdx from ${table} where email='${email}'`;
+        try{
+            const result = pool.queryParam(query);
+            return result;
+        }catch(err){
+            console.log('get userIdx by email ERR : ', err);
+            throw err;
+        }
     }
 }
 

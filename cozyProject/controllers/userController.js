@@ -213,44 +213,62 @@ const user = {
             throw err;
         }
     },
-    kakaoToken: async(req, res)=>{
+    kakaoToken: async (req, res)=>{
+        /*
+        클라에서 accessToken을 받는다.
+        accessToken으로 카카오서버에서 사용자 정보를 가져온다.
+        사용자 정보에 따라 로그인/ 회원가입을 한다.
+        로컬 디비에 저장 후, userIdx를 세션에 저장해 세션도 디비에 저장한다.
+        로그아웃하면 세션 파기.
+        세션에서 userIdx가 있는지 확인하는 미들웨어를 추가하면 될 듯.
+
+         */
         const accessToken = req.body.accessToken;
         try{
-            userResponse = await axios({
+            const userResponse = await axios({
                 method:"GET",
                 url:"https://kapi.kakao.com/v2/user/me",
                 headers:{
                     Authorization: `Bearer ${accessToken}`
                 }
             });
+
+            console.log('=====kakao userResponse data====');
+            console.log('userResponse.data : ', userResponse.data);
+
+            const nickname = userResponse.data.properties.nickname;
+            const email = userResponse.data.kakao_account.email;
+
+            const checkEmailResult = await UserModel.checkUserByEmail(email);
+            console.log('checkEmailResult : ', checkEmailResult);
+            if(checkEmailResult.length==1){
+                /* 해당 이메일로 회원가입이 되어 있다 */
+                const userIdx = await UserModel.getUserIdxByEmail(email);
+                req.session.data = userIdx;
+                console.log('req.session : ', req.session);
+                /**
+                 * 세션이 mysql에 save가 안됨
+                 */
+                req.session.save(()=>{
+                    return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.AUTH_SUCCESS, {userIdx}));
+                });
+            }else{
+                /* 회원가입 해주기 */
+                const userIdx = await UserModel.signup(nickname, '', '', email);
+                console.log('req.session : ', req.session);
+                req.session.data = userIdx;
+                /**
+                 * 세션이 mysql에 save가 안됨
+                 */
+                req.session.save(()=>{
+                    return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.CREATED_USER, {userIdx : userIdx}));
+                    //res.redirect('/');
+                });
+            }
         }catch(error){
             console.log('kakaoToken ERR : ', error);
             throw error;
         }
-        console.log('=====kakao userResponse data====');
-        //console.log(userResponse);
-        console.log('userResponse.data : ', userResponse.data);
-        const nickname = userResponse.data.properties.nickname;
-        const email = userResponse.data.kakao_account.email;
-
-        const checkEmailResult = await UserModel.checkUserByEmail(email);
-        if(checkEmailResult.length()>0){
-            /* 해당 이메일로 회원가입이 되어 있다 */
-            if(nickname==checkEmailResult.nickname){
-                /*
-                이메일과 닉네임이 모두 맞다면 -> 로그인
-                */
-            }else{
-                /*
-                이메일은 DB에 존재하지만 닉네임과 일치하지 않는다면 -> 이미 존재하는 이메일이라며 오류창 띄우기
-                */
-                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.EMAIL_NICKNAME_MATCH_ERR));
-            }
-        }else{
-            /* 회원가입 해주기 */
-            
-        }
-        
     }
 }
 module.exports = user;
