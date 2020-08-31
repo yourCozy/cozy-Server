@@ -20,12 +20,12 @@ const activity = {
             throw err;
         }
     },
-    registerActivity: async (bookstoreIdx, bookstoreName, categoryIdx, deadline) => {
+    registerActivity: async (bookstoreIdx, activityName, categoryIdx, price, limitation, intro, accountNum, deadline) => {
         const date = moment().format('YYYY년 M월 D일 HH:mm');
-        const fields = 'bookstoreIdx, activityName, categoryIdx, createdAt, deadline';
+        const fields = 'bookstoreIdx, activityName, categoryIdx, price, limitation, intro, accountNum, deadline, createdAt';
         // insert into activity(bookstoreIdx, activityName, categoryIdx, createdAt, deadline) values(1, "공연2", 6, "2020년 8월 22일", '2020-08-31');
-        const values = [bookstoreIdx, bookstoreName, categoryIdx, date, deadline];
-        const questions = '?, ?, ?, ?, ?'
+        const values = [bookstoreIdx, activityName, categoryIdx, price, limitation, intro, accountNum, deadline, date];
+        const questions = '?, ?, ?, ?, ?, ?, ?, ?, ?'
 
         const query = `INSERT INTO ${activityTable}(${fields}) VALUES(${questions})`;
         try {
@@ -34,12 +34,15 @@ const activity = {
             console.log('insertId: ',insertId);
             return insertId;
         } catch (err) {
-            console.log('showActivitiesByCategory ERROR : ', err);
+            console.log('register Activity ERROR : ', err);
             throw err;
         }
     },
     showActivitiesByLatest: async (categoryIdx) => {
-        const query = `SELECT * FROM ${activityTable} WHERE categoryIdx = ${categoryIdx} ORDER BY createdAt DESC`;
+        const query = `SELECT bs.bookstoreName, a.activityName, a.intro, a.price, a.image FROM ${activityTable} a, ${bookstoreTable} bs 
+            WHERE a.bookstoreIdx = bs.bookstoreIdx 
+            AND a.categoryIdx = ${categoryIdx} 
+            ORDER BY a.createdAt DESC`;
         try {
             const result = await pool.queryParam(query);
             return result;
@@ -50,10 +53,13 @@ const activity = {
     },
     showActivitiesByDeadline: async (categoryIdx) => {
         // 날짜 차이 가져오기 
-        const query = `SELECT *, DATEDIFF(deadline, curdate()) AS "dday" FROM ${activityTable} 
-            WHERE categoryIdx = ${categoryIdx} 
-            AND deadline - curdate() > -1
-            ORDER BY dday;`;
+        const diffQuery = `SELECT DATEDIFF`
+        const query = `SELECT bs.bookstoreName, a.activityName, a.intro, a.price, a.image, DATEDIFF(a.deadline, curdate()) AS "dday" 
+            FROM ${activityTable} a, ${bookstoreTable} bs
+            WHERE a.bookstoreIdx = bs.bookstoreIdx
+            AND a.categoryIdx = ${categoryIdx} 
+            AND a.deadline - curdate() > -1
+            ORDER BY dday, a.createdAt DESC;`;
         try {
             const result = await pool.queryParam(query);
             return result;
