@@ -8,17 +8,9 @@ const bookstore = {
         
     },
     showRecommendation : async (req, res) => {
-        //const userIdx = req.decoded.userIdx;
+        const userIdx = req.decoded.userIdx;
         // var autoLogin = req.cookies.autoLogin;
-        //console.log('req.session : ', req.sessionID);
-        var userIdx;
-        if(req.session.userIdx===undefined){
-            /**로그인 화면으로 이동 */
-            //return res.redirect('/auth/kakao');
-            return res.redirect('/');
-        }else{
-            userIdx = req.session.userIdx;
-        }
+        //var userIdx=req.session.userIdx;
         const bookstore = await BookstoreModel.showRecommendation(userIdx);
         try {
             if (!bookstore.length) {

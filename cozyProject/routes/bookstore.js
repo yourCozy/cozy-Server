@@ -3,11 +3,11 @@ var router = express.Router();
 
 const AuthMiddleware = require('../middlewares/auth');
 const BookstoreController = require('../controllers/bookstoreController');
+const SessionMiddleware = require('../middlewares/session');
 
 // router.post('/recommendation', AuthMiddleware.checkToken, BookstoreController.registerRecommendation);
 
-//router.get('/recommendation', AuthMiddleware.checkToken, BookstoreController.showRecommendation); // 사용자마다 취향 다름
-router.get('/recommendation', BookstoreController.showRecommendation);
+router.get('/recommendation', AuthMiddleware.checkToken, BookstoreController.showRecommendation); // 사용자마다 취향 다름
 
 router.get('/detail/:bookstoreIdx', AuthMiddleware.checkToken, BookstoreController.showDetail); // 북마크 때문에 토큰 필요
 

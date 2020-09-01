@@ -80,5 +80,7 @@ module.exports = {
     //소셜 로그인 관련
     EMAIL_NICKNAME_MATCH_ERR : '해당 이메일로 회원가입이 되어있습니다.',
     DELETE_SESSION: '세션을 삭제했습니다.(로그아웃 되었습니다.)',
+    
+    GET_REFRESH_TOKEN : 'userIdx에 해당하는 refreshToken입니다.',
     DB_ERROR: 'DB 오류'
 };

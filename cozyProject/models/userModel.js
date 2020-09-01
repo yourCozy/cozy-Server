@@ -4,10 +4,10 @@ const table2 ='bookstore';
 const table3 ='images';
 
 const user = {
-    signup: async (nickname, password, salt, email) => {
-        const fields = 'nickname, hashed, salt, email';
-        const questions = `?, ?, ?, ?`;
-        const values = [nickname, password, salt, email];
+    signup: async (nickname, password, salt, email, refreshToken) => {
+        const fields = 'nickname, hashed, salt, email, refreshToken';
+        const questions = `?, ?, ?, ?, ?`;
+        const values = [nickname, password, salt, email, refreshToken];
         const query = `INSERT INTO ${table}(${fields}) VALUES(${questions})`;
         try {
             const result = await pool.queryParamArr(query, values);
@@ -110,6 +110,16 @@ const user = {
             return result;
         }catch(err){
             console.log('get userIdx by email ERR : ', err);
+            throw err;
+        }
+    },
+    getRefreshTokenByUserIdx: async(userIdx)=>{
+        const query = `select refreshToken from ${table} where userIdx = ${userIdx}`;
+        try{
+            const result = pool.queryParam(query);
+            return result;
+        }catch(err){
+            console.log('get refreshToken by userIdx ERR : ', err);
             throw err;
         }
     }
