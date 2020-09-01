@@ -8,6 +8,8 @@ const bookstore = {
         const userIdx = req.decoded.userIdx;
         const tastesResult = await BookstoreModel.showTastes(userIdx);
         const tastes = tastesResult[0].tastes;
+        const countZeroResult = await BookstoreModel.updateTasteCountToZero();
+        console.log(countZeroResult);
         const result = await BookstoreModel.orderByTastes(userIdx, tastes);
         try {
             if (!result.length) {

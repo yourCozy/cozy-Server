@@ -33,7 +33,7 @@ const mypage = {
     updateTastes: async (req, res) => {
         const userIdx = req.decoded.userIdx;
         var opt = Object.values(req.query); // json 객체의 value 값들을 배열로 반환
-        // console.log(opt);
+        console.log(opt);
 
         try {
             const result = await MypageModel.updateTastes(userIdx, opt);

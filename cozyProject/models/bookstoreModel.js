@@ -129,6 +129,8 @@ const bookstore = {
     },
     orderByTastes: async(userIdx, tastes) => {
         let tastesArray = tastes.split(','); // / 도 나눠질 수 있도록 추가
+        // tastesArray = tastes.split('/'); // x
+        console.log(tastesArray);
         let count = 0;
 
         /**
@@ -137,29 +139,49 @@ const bookstore = {
             or bookstoreName like '%놀이터%';  
          */
 
-        let strQuery = `SELECT bookstoreIdx, bookstoreName, activities FROM ${bookstoreTable} WHERE `;
+        let strQuery = '';
         let fields = ['bookstoreName', 'activities'];
-
-        for (var field in fields) {
-            for (var taste in tastesArray) {
-                if (count === 0) {
-                    strQuery = strQuery + `${fields[field]} LIKE '%${tastesArray[taste]}%'`;
-                }
-                else {
-                    strQuery = strQuery + ` OR ${fields[field]} LIKE '%${tastesArray[taste]}%'`;
-                }
-                count++;
-            }
-        }
-        strQuery = strQuery + `LIMIT 8`
-        
-        console.log('strQuery: ',strQuery);
+        let result = '';
 
         try {
-            const result = await pool.queryParam(strQuery);
+            for (var taste in tastesArray) {
+                strQuery = `SELECT bookstoreIdx, bookstoreName, activities FROM ${bookstoreTable} WHERE `;
+                count = 0;
+                for (var field in fields) {
+                    if (count === 0) {
+                        strQuery = strQuery + `${fields[field]} LIKE '%${tastesArray[taste]}%'`;
+                    }
+                    else {
+                        strQuery = strQuery + ` OR ${fields[field]} LIKE '%${tastesArray[taste]}%'`;
+                    }
+                    count++;
+                }
+                strQuery = strQuery + ` LIMIT 8`;
+                result = await pool.queryParam(strQuery);
+                // console.log(strQuery);
+
+                let countQuery = '';
+                for (var i of result){
+                    // console.log(i.bookstoreIdx);
+                    countQuery = `UPDATE ${bookstoreTable} SET tasteCount = tasteCount + 1 WHERE bookstoreIdx = ${i.bookstoreIdx}`
+                    await pool.queryParam(countQuery);
+                }
+            }
+            let query = `SELECT bookstoreIdx, bookstoreName, activities FROM ${bookstoreTable} WHERE tasteCount > 0 ORDER BY tasteCount DESC`;
+            result = await pool.queryParam(query);
             return result;
         } catch (err) {
             console.log('order by tastes ERROR : ', err);
+            throw err;
+        }
+    },
+    updateTasteCountToZero: async (req, res) => {
+        const query = `UPDATE ${bookstoreTable} SET tasteCount = 0 WHERE tasteCount > 0`;
+        try {
+            await pool.queryParam(query);
+            return 1;
+        } catch (err) {
+            console.log('update tasteCount to zero ERROR : ', err);
             throw err;
         }
     }
