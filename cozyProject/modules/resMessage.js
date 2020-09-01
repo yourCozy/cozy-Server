@@ -44,6 +44,12 @@ module.exports = {
     NO_ACT_DATA: '활동 리스트가 없습니다.',
     READ_ACT_DATA_SUCCESS: '활동 리스트 조회 성공',
 
+    // 취향 관련
+    REGISTER_TASTES_SUCCESS: '취향 등록 성공',
+    REGISTER_TASTES_FAIL: '취향 등록 실패',
+    UPDATE_TASTES_SUCCESS: '취향 수정 성공',
+    UPDATE_TASTES_FAIL: '취향 수정 실패',
+
     // cookie 관련
     COOKIE_SUCCESS: '쿠키가 저장되었습니다.',
     COOKIE_FAIL: '쿠키 저장에 실패했습니다.',
@@ -75,6 +81,9 @@ module.exports = {
     SUCCESS_UPDATE_REVIEW_PHOTO: '후기 사진 업데이트 성공',
     NO_PHOTO: '업데이트할 후기 사진이 없습니다.', 
     REVIEW_UPDATING: '후기 수정 중...',
+
+    // 취향 관련
+    ALREADY_USER: '이미 등록된 사용자입니다.',
     
     DB_ERROR: 'DB 오류'
 };

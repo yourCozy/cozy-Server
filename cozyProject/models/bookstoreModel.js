@@ -3,14 +3,21 @@ const bookstoreTable = 'bookstore';
 // const imagesTable = 'images';
 const bookmarksTable = 'bookmarks';
 const userTable = 'user';
+const tasteTable = 'taste';
 
 const bookstore = {
     showRecommendation: async (userIdx) => {
+
+        // TODO: 사용자별로 취향에 따라 검색, 북마크 여부 추가
+        // const userQuery =  `SELECT bookstores FROM ${tasteTable} WHERE userIdx = ${userIdx}`;
+
         const query = `SELECT bs.bookstoreIdx, bs.profileImg, bs.shortIntro1, bs.shortIntro2, bs.bookstoreName, bs.location, u.nickname FROM ${bookstoreTable} bs, ${userTable} u 
                         WHERE userIdx = ${userIdx}
                         ORDER BY bs.bookmark DESC LIMIT 8;`;
                         // bs.profileImg != 'NULL' AND bs.shortIntro1 != 'NULL' 나중에 추가해주기
         try {
+            // const userResult = await pool.queryParam(userQuery);
+            // console.log('userResult: ', userResult[0].bookstores);
             const result = await pool.queryParam(query);
             return result;
         } catch (err) {
@@ -92,13 +99,13 @@ const bookstore = {
         const query = `select bs.* from ${bookstoreTable} bs
                         where (binary bs.bookstoreName like "%${keyword}%" 
                         or binary location like "%${keyword}%" 
-                        or binary activity like "%${keyword}%" 
-                        or binary shortIntro like "%${keyword}%" 
+                        or binary activities like "%${keyword}%" 
+                        or binary shortIntro1 like "%${keyword}%" 
                         or binary shortIntro2 like "%${keyword}%" 
                         or binary description like "%${keyword}%" 
                         or binary hashtag1 like "%${keyword}%" 
                         or binary hashtag2 like "%${keyword}%" 
-                        or binary hashtag3 like "%${keyword}%") 
+                        or binary hashtag3 like "%${keyword}%")
                         order by bookmark desc;`;
         // console.log('search query : ', query);
         try {
@@ -109,6 +116,53 @@ const bookstore = {
             throw err;
         }                
     },
+    showTastes: async(userIdx) => {
+        const query = `SELECT * from ${tasteTable} WHERE userIdx = ${userIdx}`;
+
+        try {
+            const result = await pool.queryParam(query);
+            return result;
+        } catch (err) {
+            console.log('show tastes ERROR : ', err);
+            throw err;
+        }
+    },
+    orderByTastes: async(userIdx, tastes) => {
+        let tastesArray = tastes.split(','); // / 도 나눠질 수 있도록 추가
+        let count = 0;
+
+        /**
+         * select bookstoreIdx, bookstoreName, activities from cozy.bookstore
+            where activities like '%공연%' or activities like '%전시%'
+            or bookstoreName like '%놀이터%';  
+         */
+
+        let strQuery = `SELECT bookstoreIdx, bookstoreName, activities FROM ${bookstoreTable} WHERE `;
+        let fields = ['bookstoreName', 'activities'];
+
+        for (var field in fields) {
+            for (var taste in tastesArray) {
+                if (count === 0) {
+                    strQuery = strQuery + `${fields[field]} LIKE '%${tastesArray[taste]}%'`;
+                }
+                else {
+                    strQuery = strQuery + ` OR ${fields[field]} LIKE '%${tastesArray[taste]}%'`;
+                }
+                count++;
+            }
+        }
+        strQuery = strQuery + `LIMIT 8`
+        
+        console.log('strQuery: ',strQuery);
+
+        try {
+            const result = await pool.queryParam(strQuery);
+            return result;
+        } catch (err) {
+            console.log('order by tastes ERROR : ', err);
+            throw err;
+        }
+    }
 }
 
 module.exports = bookstore;
