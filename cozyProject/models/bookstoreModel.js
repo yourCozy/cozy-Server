@@ -1,4 +1,5 @@
 const pool = require('../modules/pool');
+const e = require('express');
 const bookstoreTable = 'bookstore';
 // const imagesTable = 'images';
 const bookmarksTable = 'bookmarks';
@@ -156,7 +157,7 @@ const bookstore = {
                     }
                     count++;
                 }
-                strQuery = strQuery + ` LIMIT 8`;
+                // strQuery = strQuery + ` LIMIT 8`;
                 result = await pool.queryParam(strQuery);
                 // console.log(strQuery);
 
@@ -167,8 +168,27 @@ const bookstore = {
                     await pool.queryParam(countQuery);
                 }
             }
-            let query = `SELECT bookstoreIdx, bookstoreName, activities FROM ${bookstoreTable} WHERE tasteCount > 0 ORDER BY tasteCount DESC`;
+            const bookmarkQuery = `SELECT * FROM ${bookmarksTable} WHERE userIdx = ${userIdx}`;
+            const bookmarkResult = await pool.queryParam(bookmarkQuery);
+            console.log(bookmarkResult);
+            let query = `SELECT bookstoreIdx, bookstoreName, activities FROM ${bookstoreTable} WHERE tasteCount > 0 ORDER BY tasteCount DESC LIMIT 8`;
             result = await pool.queryParam(query);
+
+            for (var i in result) {
+                let checked = 0;
+                console.log('i: ', i);
+                console.log('bookmarkResult[i]: ', bookmarkResult[i]);
+                console.log(result[0].bookstoreIdx);
+                for (var e in bookmarkResult) {
+                    if (bookmarkResult[e].bookstoreIdx === result[i].bookstoreIdx) {
+                        checked = 1;
+                        break;
+                    }
+                }
+                result[i].checked = checked;
+            }
+            // let query = `SELECT bookstoreIdx, bookstoreName, activities FROM ${bookstoreTable} WHERE tasteCount > 0 ORDER BY tasteCount DESC LIMIT 8`;
+            // result = await pool.queryParam(query);
             return result;
         } catch (err) {
             console.log('order by tastes ERROR : ', err);
