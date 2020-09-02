@@ -33,13 +33,13 @@ const activity = {
         13. 필사 모임 14. 숙박 15. 만들기 16. 정기간행물 17. 강연 18. 마켓
      */
     registerActivity: async (req, res) => {
-        const {bookstoreIdx, activityName, categoryIdx, price, limitation, intro, accountNum, deadline} = req.body;
+        const {bookstoreIdx, activityName, categoryIdx, price, limitation, introduction, period, deadline, image} = req.body;
 
         try{
-            if (!bookstoreIdx || !activityName || !categoryIdx || !price || !limitation) {
+            if (!bookstoreIdx || !activityName || !categoryIdx || !price) {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
             }
-            const idx = await ActivityModel.registerActivity(bookstoreIdx, activityName, categoryIdx, price, limitation, intro, accountNum, deadline);
+            const idx = await ActivityModel.registerActivity(bookstoreIdx, activityName, categoryIdx, price, limitation, introduction, period, deadline, image);
             
             if(idx === -1){
                 res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.ERROR_IN_INSERT_REVIEW));

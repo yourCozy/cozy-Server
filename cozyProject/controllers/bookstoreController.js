@@ -42,17 +42,29 @@ const bookstore = {
             // var autoLogin = req.cookies.autoLogin;
             //var userIdx=req.session.userIdx;
             const tastesResult = await BookstoreModel.showTastes(userIdx);
-            const tastes = tastesResult[0].tastes;
-            const countZeroResult = await BookstoreModel.updateTasteCountToZero();
-            console.log(countZeroResult);
-            const bookstore = await BookstoreModel.orderByTastes(userIdx, tastes);
-            try {
-                if (!bookstore.length) {
-                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+            if (!tastesResult.length) {
+                const withoutTasteQuery = await BookstoreModel.showRecommendation();
+                try {
+                    if (!withoutTasteQuery.length) {
+                        return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+                    }
+                    else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, withoutTasteQuery));
+                } catch (err) {
+                    res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
                 }
-                else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstore));
-            } catch (err) {
-                res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            } else {
+                const tastes = tastesResult[0].tastes;
+                const countZeroResult = await BookstoreModel.updateTasteCountToZero();
+                console.log(countZeroResult);
+                const bookstore = await BookstoreModel.orderByTastes(userIdx, tastes);
+                try {
+                    if (!bookstore.length) {
+                        return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+                    }
+                    else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstore));
+                } catch (err) {
+                    res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+                }
             }
         }        
     },

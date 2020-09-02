@@ -81,7 +81,7 @@ const mypage = {
         }
     },
     checkUser: async (userIdx) => {
-        const query = `SELECT * FROM ${userTable} WHERE userIdx = ${userIdx}`;
+        const query = `SELECT * FROM ${tasteTable} WHERE userIdx = ${userIdx}`;
         try {
             const result = await pool.queryParam(query);
             return result;

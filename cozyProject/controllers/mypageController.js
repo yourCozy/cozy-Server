@@ -107,7 +107,9 @@ const mypage = {
         }
     },
     showRecent : async (req, res) => {
-        const userIdx = req.decoded.userIdx;
+        // const userIdx = req.decoded.userIdx;
+        // 로그인하지 않은 상태에서 본 책방은 쿠키에 저장되고 로그인해도 계속 남아있음
+        // 로그아웃하고 다른 아이디로 로그인하면 쿠키 삭제되어 있음
         var bookstores = req.cookies.bookstores;
         if (!req.cookies.bookstores) {
             return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_RECENT_BOOKSTORES));
