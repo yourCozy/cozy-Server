@@ -10,8 +10,9 @@ const bookmarksTable = 'bookmarks';
 const userTable = 'user';
 
 const activity = {
+    // 👻 디테일 뷰에서 활동 그리드 뷰로 보는거
     showActivitiesByBookstore: async (bookstoreIdx) => {
-        const query = `SELECT * FROM ${activityTable} WHERE bookstoreIdx = ${bookstoreIdx}`
+        const query = `SELECT activityName, shortIntro, deadline, image, price FROM ${activityTable} WHERE bookstoreIdx = ${bookstoreIdx}`
         try {
             const result = await pool.queryParam(query);
             return result;
@@ -20,6 +21,7 @@ const activity = {
             throw err;
         }
     },
+    // 👻 활동 신청하기 -> sprint 3 ❗❗
     registerActivity: async (bookstoreIdx, activityName, categoryIdx, price, limitation, intro, accountNum, deadline) => {
         const date = moment().format('YYYY년 M월 D일 HH:mm');
         const fields = 'bookstoreIdx, activityName, categoryIdx, price, limitation, intro, accountNum, deadline, createdAt';
@@ -38,8 +40,9 @@ const activity = {
             throw err;
         }
     },
+    // 👻 활동 탭에서 하나 클릭했을 때 -> 최신순
     showActivitiesByLatest: async (categoryIdx) => {
-        const query = `SELECT bs.bookstoreName, a.activityName, a.intro, a.price, a.image FROM ${activityTable} a, ${bookstoreTable} bs 
+        const query = `SELECT bs.bookstoreName, a.activityName, a.price, a.image, a.deadline FROM ${activityTable} a, ${bookstoreTable} bs 
             WHERE a.bookstoreIdx = bs.bookstoreIdx 
             AND a.categoryIdx = ${categoryIdx} 
             ORDER BY a.createdAt DESC`;
@@ -51,10 +54,11 @@ const activity = {
             throw err;
         }
     },
+    // 👻 활동 탭에서 하나 클릭했을 때 -> 마감 임박 순
     showActivitiesByDeadline: async (categoryIdx) => {
         // 날짜 차이 가져오기 
-        const diffQuery = `SELECT DATEDIFF`
-        const query = `SELECT bs.bookstoreName, a.activityName, a.intro, a.price, a.image, DATEDIFF(a.deadline, curdate()) AS "dday" 
+        //const diffQuery = `SELECT DATEDIFF`
+        const query = `SELECT bs.bookstoreName, a.activityName, a.price, a.image, a.deadline, DATEDIFF(a.deadline, curdate()) AS "dday" 
             FROM ${activityTable} a, ${bookstoreTable} bs
             WHERE a.bookstoreIdx = bs.bookstoreIdx
             AND a.categoryIdx = ${categoryIdx} 
@@ -67,6 +71,20 @@ const activity = {
             console.log('showActivitiesByDeadline ERROR : ', err);
             throw err;
         }
+    },
+    // 👻 활동 하나 자세히 보기
+    showActivityDetail: async (activityName)=>{
+        const query = `select *, DATEDIFF(deadline, curdate()) as "dday" from ${activityTable} where activityName = '${activityName}'`;
+        try{
+            const result = await pool.queryParam(query);
+            return result;
+        }catch(err){
+            console.log('showActivityDetail ERROR : ', err);
+            throw err;
+        }
+
+
+
     }
 }
 

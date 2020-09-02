@@ -4,7 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-const session = require('express-session');
+//const session = require('express-session');
 //const MySQLStore = require('express-mysql-session')(session);
 //const MySQLInfo = require('./config/database.json');
 

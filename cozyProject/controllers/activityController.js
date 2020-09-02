@@ -8,21 +8,18 @@ const mailer = require('../modules/mailer');
 const multer = require('../modules/multer');
 
 const activity = {
-    showRecommendation: async (req, res) => {
-        
-    },
     showActivitiesByBookstore: async (req, res) => {
         // const userIdx = req.decoded.userIdx;
         const bookstoreIdx = req.params.bookstoreIdx;
         
         try {
             const activitiesByBookstore = await ActivityModel.showActivitiesByBookstore(bookstoreIdx);
-            if (!activitiesByBookstore.length) {
+            if (activitiesByBookstore.length==0) {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_ACT_DATA));
             }
             else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByBookstore));
         } catch (err) {
-            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
     },
     // 우선 임시로 여기에 넣음
@@ -47,7 +44,7 @@ const activity = {
                 res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.INSERT_REVIEW_SUCCESS, idx));
             }
         }catch(err){
-            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
     },
     showActivitiesByLatest: async (req, res) => {
@@ -60,7 +57,7 @@ const activity = {
             }
             else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByLatest));
         } catch (err) {
-            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
     },
     showActivitiesByDeadline: async (req, res) => {
@@ -73,7 +70,20 @@ const activity = {
             }
             else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByDeadline));
         } catch (err) {
-            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+        }
+    },
+    showActivityDetail: async (req, res)=>{
+        const activityName = decodeURI(req.params.activityName);
+        try{
+            const result = await ActivityModel.showActivityDetail(activityName);
+            if(result.length==0){
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+            }else{
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, result));
+            }
+        }catch(err){
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
     }
 }
