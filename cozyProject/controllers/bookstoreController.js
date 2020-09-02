@@ -21,18 +21,36 @@ const bookstore = {
         }
     },
     showRecommendation : async (req, res) => {
-        const userIdx = req.decoded.userIdx;
-        // var autoLogin = req.cookies.autoLogin;
-        //var userIdx=req.session.userIdx;
-        const bookstore = await BookstoreModel.showRecommendation(userIdx);
-        try {
-            if (!bookstore.length) {
-                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+        // 로그인 하지 않은 사용자를 위한 추천뷰, 토큰 인증 필요없음.
+        console.log(req.decoded);
+
+        if (req.decoded === undefined) {
+            const bookstoreForAny = await BookstoreModel.showRecommendation1();
+            try {
+                if (!bookstoreForAny.length) {
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+                }
+                else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstoreForAny));
+            } catch (err) {
+                res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstore));
-        } catch (err) {
-            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
-        }
+        } else {
+            const userIdx = req.decoded.userIdx;
+            console.log(userIdx);
+
+            console.log('userIdx: ',userIdx);
+            // var autoLogin = req.cookies.autoLogin;
+            //var userIdx=req.session.userIdx;
+            const bookstore = await BookstoreModel.showRecommendation(userIdx);
+            try {
+                if (!bookstore.length) {
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+                }
+                else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstore));
+            } catch (err) {
+                res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            }
+        }        
     },
     showDetail : async (req, res) => {
         const userIdx = req.decoded.userIdx;

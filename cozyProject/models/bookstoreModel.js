@@ -26,6 +26,20 @@ const bookstore = {
             throw err;
         }
     },
+    showRecommendation1: async () => {
+        const query = `SELECT bookstoreIdx, bookstoreName FROM ${bookstoreTable}
+                        LIMIT 8;`;
+                        // bs.profileImg != 'NULL' AND bs.shortIntro1 != 'NULL' 나중에 추가해주기
+        try {
+            // const userResult = await pool.queryParam(userQuery);
+            // console.log('userResult: ', userResult[0].bookstores);
+            const result = await pool.queryParam(query);
+            return result;
+        } catch (err) {
+            console.log('showRecommendation ERROR : ', err);
+            throw err;
+        }
+    },
     showDetail: async (userIdx, bookstoreIdx) => {
         const bookmarkQuery = `SELECT * FROM ${bookmarksTable} WHERE bookstoreIdx = ${bookstoreIdx} AND userIdx = ${userIdx};`;
         const query = `select bs.* from ${bookstoreTable} bs, ${userTable} u
