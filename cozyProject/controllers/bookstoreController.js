@@ -4,8 +4,21 @@ const resMessage = require('../modules/resMessage');
 const util = require('../modules/util');
 
 const bookstore = {
-    registerRecommendation: async (req, res) => {
-        
+    orderByTastes: async (req, res) => {
+        const userIdx = req.decoded.userIdx;
+        const tastesResult = await BookstoreModel.showTastes(userIdx);
+        const tastes = tastesResult[0].tastes;
+        const countZeroResult = await BookstoreModel.updateTasteCountToZero();
+        console.log(countZeroResult);
+        const result = await BookstoreModel.orderByTastes(userIdx, tastes);
+        try {
+            if (!result.length) {
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+            }
+            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, result));
+        } catch (err) {
+            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+        }
     },
     showRecommendation : async (req, res) => {
         const userIdx = req.decoded.userIdx;

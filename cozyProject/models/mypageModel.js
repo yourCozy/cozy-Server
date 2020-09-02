@@ -1,9 +1,11 @@
 const pool = require('../modules/pool');
+const { queryParamArr } = require('../modules/pool');
 
 const bookstoreTable = 'bookstore';
 const imagesTable = 'images';
 const bookmarksTable = 'bookmarks';
 const userTable = 'user';
+const tasteTable = 'taste';
 
 const mypage = {
     showInterest: async (userIdx) => {
@@ -60,4 +62,44 @@ const mypage = {
             throw err;
         }
     },
+    checkUser: async (userIdx) => {
+        const query = `SELECT * FROM ${userTable} WHERE userIdx = ${userIdx}`;
+        try {
+            const result = await pool.queryParam(query);
+            return result;
+        } catch (err) {
+            console.log('register recommendation ERROR : ', err);
+            throw err;
+        }
+    },
+    registerTastes: async(userIdx, opt) => {
+        // 자바스크립트 배열을 문자열로 변환
+        // const optStr = opt.join(',');
+        // console.log(optStr);
+        
+        const query = `INSERT INTO ${tasteTable}(userIdx, tastes) VALUES(${userIdx}, '${opt}')`;
+        try {
+            await pool.queryParam(query);
+            const resultQuery = `SELECT * FROM ${tasteTable} WHERE userIdx = ${userIdx}`;
+            const result = await pool.queryParam(resultQuery);
+            return result;
+        } catch (err) {
+            console.log('register recommendation ERROR : ', err);
+            throw err;
+        }
+    },
+    updateTastes: async(userIdx, opt) => {
+        const query = `UPDATE ${tasteTable} SET tastes = '${opt}' WHERE userIdx = ${userIdx}`;
+        try {
+            await pool.queryParam(query);
+            const resultQuery = `SELECT * FROM ${tasteTable} WHERE userIdx = ${userIdx}`;
+            const result = await pool.queryParam(resultQuery);
+            return result;
+        } catch (err) {
+            console.log('update tastes ERROR : ', err);
+            throw err;
+        }
+    },
 }
+
+module.exports = mypage;
