@@ -23,7 +23,7 @@ const bookstore = {
     showRecommendation : async (req, res) => {
         const userIdx = req.decoded.userIdx;
         // var autoLogin = req.cookies.autoLogin;
-        // console.log(autoLogin);
+        //var userIdx=req.session.userIdx;
         const bookstore = await BookstoreModel.showRecommendation(userIdx);
         try {
             if (!bookstore.length) {

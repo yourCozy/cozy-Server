@@ -211,6 +211,87 @@ const user = {
             console.log('find PW by email mailer ERR : ',err);
             throw err;
         }
+    },
+    kakaoLogin: async (req, res)=>{
+        const {email, nickname, autoLogin}=req.body;
+        const checkEmailResult = await UserModel.checkUserByEmail(email);
+        if(checkEmailResult.length==1){
+            console.log('로그인 되었습니다.');
+            const user = await UserModel.getUserIdxByEmail(email);
+            req.session.userIdx = user[0].userIdx;
+            if(autoLogin == "true"){
+                //자동로그인 승인
+                req.session.cookie.originalMaxAge = 365*24*60*60*1000;
+                //req.session.cookie.originalMaxAge = 1000;
+            }else{
+                req.session.cookie.expires = false;
+            }
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {
+                userIdx: user[0].userIdx,
+                nickname: user[0].nickname,
+                email: user[0].email,
+                profile: user[0].profileImg
+            }));
+        }else{
+            console.log('회원가입 -> 로그인 되었습니다.');
+            const userIdx = await UserModel.signup(nickname, '', '', email);
+            const user = await UserModel.getUserIdxByEmail(email);
+            req.session.userIdx = userIdx;
+            if(autoLogin == "true"){
+                //자동로그인 승인
+                req.session.cookie.originalMaxAge = 365*24*60*60*1000;
+                //req.session.cookie.originalMaxAge = 1;
+            }else{
+                req.session.cookie.expires = false;
+            }
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.CREATED_AND_LOGIN, {
+                userIdx: user[0].userIdx,
+                nickname: user[0].nickname,
+                email: user[0].email,
+                profile: user[0].profileImg
+            }));
+        }
+        /*
+            const nickname = req.params.data.properties.nickname;
+            const email = req.params.data.kakao_account.email;
+
+            const checkEmailResult = await UserModel.checkUserByEmail(email);
+            console.log('checkEmailResult : ', checkEmailResult);
+
+            if(checkEmailResult.length==1){
+                console.log('로그인 되었습니다.');
+                const user = await UserModel.getUserIdxByEmail(email);
+
+                req.session.userIdx = user[0].userIdx;
+                req.cookies.session_id = req.sessionID;
+                res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.AUTH_SUCCESS, {
+                    userIdx: user[0].userIdx,
+                    nickname: user[0].nickname,
+                    email: user[0].email,
+                    profile: user[0].profile,
+                    accessToken: user[0].accessToken
+                }));
+            }else{
+                console.log('회원가입 -> 로그인 되었습니다.');
+                const userIdx = await UserModel.signup(nickname, '', '', email);
+                const user = await UserModel.getUserIdxByEmail(email);
+
+                req.session.userIdx = user[0].userIdx;
+                res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.CREATED_AND_LOGIN, {
+                    userIdx: user[0].userIdx,
+                    nickname: user[0].nickname,
+                    email: user[0].email,
+                    profile: user[0].profile,
+                    accessToken: user[0].accessToken
+                }));
+            }
+            */
+            
+    },
+    kakaoLogout: async (req, res)=>{
+        req.session.destroy();
+        console.log('session을 삭제했습니다.');
+        res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.DELETE_SESSION));
     }
 }
 module.exports = user;

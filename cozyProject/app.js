@@ -4,6 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+const session = require('express-session');
+//const MySQLStore = require('express-mysql-session')(session);
+//const MySQLInfo = require('./config/database.json');
+
 var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
 
@@ -17,7 +21,25 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
+/*
+var options = {
+  host: MySQLInfo.host,
+  port: MySQLInfo.port,
+  user: MySQLInfo.user,
+  password: MySQLInfo.password,
+  database: MySQLInfo.database
+};
+var sessionStore = new MySQLStore(options);
+
+app.use(session({
+  secret: '$SeCrEtKeY$',
+  resave: false,
+  saveUninitialized: false,
+  store: sessionStore
+}));
+*/
 
 app.use('/', indexRouter);
 // app.use('/users', usersRouter);

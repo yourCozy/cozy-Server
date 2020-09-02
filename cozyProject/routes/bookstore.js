@@ -3,6 +3,7 @@ var router = express.Router();
 
 const AuthMiddleware = require('../middlewares/auth');
 const BookstoreController = require('../controllers/bookstoreController');
+const SessionMiddleware = require('../middlewares/session');
 
 // router.post('/recommendation', AuthMiddleware.checkToken, BookstoreController.registerRecommendation);
 
