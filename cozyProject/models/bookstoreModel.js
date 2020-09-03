@@ -7,13 +7,12 @@ const userTable = 'user';
 const tasteTable = 'taste';
 
 const bookstore = {
-    showRecommendation: async (userIdx) => {
+    showRecommendation: async () => {
 
         // TODO: 사용자별로 취향에 따라 검색, 북마크 여부 추가
         // const userQuery =  `SELECT bookstores FROM ${tasteTable} WHERE userIdx = ${userIdx}`;
 
-        const query = `SELECT bs.bookstoreIdx, bs.profileImg, bs.shortIntro1, bs.shortIntro2, bs.bookstoreName, bs.location, u.nickname FROM ${bookstoreTable} bs, ${userTable} u 
-                        WHERE userIdx = ${userIdx}
+        const query = `SELECT bs.bookstoreIdx, bs.profileImg, bs.shortIntro1, bs.shortIntro2, bs.bookstoreName, bs.location FROM ${bookstoreTable} bs
                         ORDER BY bs.bookmark DESC LIMIT 8;`;
                         // bs.profileImg != 'NULL' AND bs.shortIntro1 != 'NULL' 나중에 추가해주기
         try {
@@ -40,7 +39,19 @@ const bookstore = {
             result[0].checked = checked;
             return result;
         } catch (err) {
-            console.log('showRecommendation ERROR : ', err);
+            console.log('show detail ERROR : ', err);
+            throw err;
+        }
+    },
+    showDetailForAny: async (bookstoreIdx) => {
+        const query = `SELECT * FROM ${bookstoreTable} WHERE bookstoreIdx = ${bookstoreIdx}`;
+
+        try {
+            const result = await pool.queryParam(query);
+            result[0].checked = 0;
+            return result;
+        } catch (err) {
+            console.log('showDetailForAny ERROR : ', err);
             throw err;
         }
     },
@@ -77,10 +88,26 @@ const bookstore = {
             return locationResult;
         } catch (err) {
             if (err.errno == 1062) {
-                console.log('show location ERROR : ', err.errno, err.code);
+                console.log('showBookstoresBySection ERROR : ', err.errno, err.code);
                 throw err;
             }
-            console.log('show location ERROR : ', err);
+            console.log('showBookstoresBySection ERROR : ', err);
+            throw err;
+        }
+    },
+    showBookstoresBySectionForAny: async (sectionIdx) => {
+        // SELECT bs.bookstoreIdx, bs.bookstoreName, bs.hashtag1, bs.hashtag2, bs.hashtag3, bs.profileImg, bs.image1 from ${bookstoreTable} bs
+        // WHERE bs.sectionIdx = ${sectionIdx};
+        const query = `SELECT bookstoreIdx, bookstoreName, hashtag1, hashtag2, hashtag3, profileImg, image1 from ${bookstoreTable} 
+                        WHERE sectionIdx = ${sectionIdx}`;
+        try {
+            const result = await pool.queryParam(query);
+            result.forEach(element => {
+                element.checked = 0;
+            });
+            return result;
+        } catch (err) {
+            console.log('showBookstoresBySectionForAny ERROR : ',err);
             throw err;
         }
     },
