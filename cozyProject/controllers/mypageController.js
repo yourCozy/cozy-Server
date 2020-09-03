@@ -22,7 +22,7 @@ const mypage = {
             if (!result.length) {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.REGISTER_TASTES_FAIL));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.REGISTER_TASTES_SUCCESS, result));
+            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.REGISTER_TASTES_SUCCESS, result[0]));
         } catch (err) {
             res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
@@ -45,7 +45,7 @@ const mypage = {
             if (!result.length) {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.UPDATE_TASTES_FAIL));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.UPDATE_TASTES_SUCCESS, result));
+            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.UPDATE_TASTES_SUCCESS, result[0]));
         } catch (err) {
             res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
@@ -72,18 +72,14 @@ const mypage = {
             const interest = await MypageModel.showInterest(userIdx);
             console.log('interest: ', interest);
             if(interest.length === 0){
-                const nickname = await MypageModel.selectNickname(userIdx);
-                console.log('nickname: ', nickname);
-                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.NO_DATA, [{
-                    bookstoreIdx: 0,
-                    bookstoreName: "NULL",
-                    profile: "NULL",
-                    hashtag1: "NULL",
-                    hashtag2: "NULL",
-                    hashtag3: "NULL",
-                    nickname: nickname[0].nickname,
-                    image1: "NULL"
-                }]));
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.NO_DATA, {
+                    bookstoreIdx: null,
+                    bookstoreName: null,
+                    mainImg: null,
+                    hashtag1: null,
+                    hashtag2: null,
+                    hashtag3: null
+                }));
             }else{
                 console.log(interest);
                 return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, interest));
@@ -94,17 +90,22 @@ const mypage = {
     },
     updateBookmark: async (req, res) => {
         const bookstoreIdx = req.params.bookstoreIdx;
-        const userIdx = req.decoded.userIdx;
-        try {
-            const result = await MypageModel.updateBookmark(userIdx, bookstoreIdx);
-            let message = '북마크 체크';
-            if(result === 0){
-                message = '북마크 해제';
+        if (req.decoded === undefined) {
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.EMPTY_TOKEN));
+        } else {
+            const userIdx = req.decoded.userIdx;
+            try {
+                const result = await MypageModel.updateBookmark(userIdx, bookstoreIdx);
+                let message = '북마크 체크';
+                if(result === 0){
+                    message = '북마크 해제';
+                }
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.BOOKMARK_SUCCESS, {checked: result}));
+            } catch (err) {
+                res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
             }
-            return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.BOOKMARK_SUCCESS, {checked: result}));
-        } catch (err) {
-            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
+        
     },
     showRecent : async (req, res) => {
         // const userIdx = req.decoded.userIdx;
@@ -112,7 +113,7 @@ const mypage = {
         // 로그아웃하고 다른 아이디로 로그인하면 쿠키 삭제되어 있음
         var bookstores = req.cookies.bookstores;
         if (!req.cookies.bookstores) {
-            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_RECENT_BOOKSTORES));
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.NO_RECENT_BOOKSTORES));
         }
 
         console.log(bookstores);

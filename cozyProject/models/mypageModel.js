@@ -9,11 +9,10 @@ const tasteTable = 'taste';
 
 const mypage = {
     showInterest: async (userIdx) => {
-        let query = `SELECT A.bookstoreIdx, A.bookstoreName, A.profileImg, A.hashtag1, A.hashtag2, A.hashtag3, C.nickname, A.image1 
-                        FROM ${bookstoreTable} A, ${bookmarksTable} B, ${userTable} C
+        let query = `SELECT A.bookstoreIdx, A.bookstoreName, A.mainImg, A.hashtag1, A.hashtag2, A.hashtag3
+                        FROM ${bookstoreTable} A, ${bookmarksTable} B
                         WHERE B.userIdx = ${userIdx} 
-                        AND A.bookstoreIdx=B.bookstoreIdx 
-                        AND B.userIdx = C.userIdx 
+                        AND A.bookstoreIdx=B.bookstoreIdx
                         ORDER BY B.bookmarkIdx desc;`;
         try{
             let result = await pool.queryParam(query);
