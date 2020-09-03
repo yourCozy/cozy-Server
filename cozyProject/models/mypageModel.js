@@ -69,7 +69,7 @@ const mypage = {
         }
     },
     selectProfile: async(bookstoreIdx)=>{
-        const query = `SELECT b.bookstoreIdx, b.bookstoreName, b.profileImg, b.image1 FROM ${bookstoreTable} b
+        const query = `SELECT b.bookstoreIdx, b.bookstoreName, b.mainImg FROM ${bookstoreTable} b
                         WHERE b.bookstoreIdx = ${bookstoreIdx}`;
         try {
             const result = await pool.queryParam(query);
