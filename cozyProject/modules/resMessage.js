@@ -40,6 +40,8 @@ module.exports = {
     // 서점 데이터 관련
     NO_DATA: '서점 리스트가 없습니다.',
     READ_DATA_SUCCESS: '서점 리스트 조회 성공',
+    GET_BOOKSTORE_SUCCESS: '서점 조회 성공',
+    GET_BOOKSTORE_FAIL: '서점 조회 실패',
 
     // 활동 데이터 관련
     NO_ACT_DATA: '활동 리스트가 없습니다.',
