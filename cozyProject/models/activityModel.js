@@ -42,13 +42,18 @@ const activity = {
     },
     // 👻 활동 탭에서 하나 클릭했을 때 -> 최신순
     showActivitiesByLatest: async (categoryIdx) => {
-        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image, DATEDIFF(a.deadline, curdate()) AS "dday"
+        const now = moment().format('YYYY-MM-DD HH:mm');
+        // console.log(now);
+        const updateQuery = `UPDATE ${activityTable} SET today = '${now}' WHERE categoryIdx = ${categoryIdx}`;
+
+        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image, DATEDIFF(a.deadline, a.today) AS "dday"
             FROM ${activityTable} a, ${bookstoreTable} bs 
             WHERE a.bookstoreIdx = bs.bookstoreIdx 
             AND a.categoryIdx = ${categoryIdx}
-            AND a.deadline - curdate() > -1
+            AND DATEDIFF(a.deadline, a.today) > -1
             ORDER BY a.createdAt DESC;`;
         try {
+            await pool.queryParam(updateQuery);
             const result = await pool.queryParam(query);
             return result;
         } catch (err) {
@@ -58,16 +63,20 @@ const activity = {
     },
     // 👻 활동 탭에서 하나 클릭했을 때 -> 마감 임박 순
     showActivitiesByDeadline: async (categoryIdx) => {
-        // 날짜 차이 가져오기 
-        //const diffQuery = `SELECT DATEDIFF`
-        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image, DATEDIFF(a.deadline, curdate()) AS "dday" 
+        // DATEDIFF(deadline, curdate()) 말고 today 필드값 추가해줘서 카테고리 누르면 today에 현재시간으로 업데이트해주고 그 값을 이용해서 deadline과의 차이를 구함..
+        const now = moment().format('YYYY-MM-DD HH:mm');
+        // console.log(now);
+        const updateQuery = `UPDATE ${activityTable} SET today = '${now}' WHERE categoryIdx = ${categoryIdx}`;
+
+        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image, DATEDIFF(a.deadline, a.today) AS "dday" 
             FROM ${activityTable} a, ${bookstoreTable} bs
             WHERE a.bookstoreIdx = bs.bookstoreIdx
             AND a.categoryIdx = ${categoryIdx} 
-            AND a.deadline - curdate() > -1
+            AND DATEDIFF(a.deadline, a.today) > -1
             ORDER BY dday, a.createdAt DESC;`;
             // 아니면 마감일 지난 활동은 클라에서 비활성화 처리
         try {
+            await pool.queryParam(updateQuery);
             const result = await pool.queryParam(query);
             return result;
         } catch (err) {
