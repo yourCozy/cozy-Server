@@ -12,7 +12,7 @@ const userTable = 'user';
 const activity = {
     // 👻 디테일 뷰에서 활동 그리드 뷰로 보는거
     showActivitiesByBookstore: async (bookstoreIdx) => {
-        const query = `SELECT activityName, shortIntro, deadline, image, price FROM ${activityTable} WHERE bookstoreIdx = ${bookstoreIdx}`
+        const query = `SELECT activityIdx, activityName, shortIntro, deadline, image, price FROM ${activityTable} WHERE bookstoreIdx = ${bookstoreIdx}`
         try {
             const result = await pool.queryParam(query);
             return result;
@@ -21,12 +21,13 @@ const activity = {
             throw err;
         }
     },
-    registerActivity: async (bookstoreIdx, activityName, categoryIdx, price, limitation, introduction, period, deadline, image) => {
+    registerActivity: async (bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image) => {
+        // 사진 개수 필드 추가해야 함. 
         const date = moment().format('YYYY년 M월 D일 HH:mm');
-        const fields = 'bookstoreIdx, activityName, categoryIdx, price, limitation, introduction, period, deadline, image, createdAt';
+        const fields = 'bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image, createdAt';
         // insert into activity(bookstoreIdx, activityName, categoryIdx, createdAt, deadline) values(1, "공연2", 6, "2020년 8월 22일", '2020-08-31');
-        const values = [bookstoreIdx, activityName, categoryIdx, price, limitation, introduction, period, deadline, image, date];
-        const questions = '?, ?, ?, ?, ?, ?, ?, ?, ?, ?'
+        const values = [bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image, date];
+        const questions = '?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?'
 
         const query = `INSERT INTO ${activityTable}(${fields}) VALUES(${questions})`;
         try {
@@ -41,9 +42,11 @@ const activity = {
     },
     // 👻 활동 탭에서 하나 클릭했을 때 -> 최신순
     showActivitiesByLatest: async (categoryIdx) => {
-        const query = `SELECT bs.bookstoreName, a.activityName, a.price, a.image, a.deadline FROM ${activityTable} a, ${bookstoreTable} bs 
+        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image, DATEDIFF(a.deadline, curdate()) AS "dday"
+            FROM ${activityTable} a, ${bookstoreTable} bs 
             WHERE a.bookstoreIdx = bs.bookstoreIdx 
             AND a.categoryIdx = ${categoryIdx}
+            AND a.deadline - curdate() > -1
             ORDER BY a.createdAt DESC;`;
         try {
             const result = await pool.queryParam(query);
@@ -57,7 +60,7 @@ const activity = {
     showActivitiesByDeadline: async (categoryIdx) => {
         // 날짜 차이 가져오기 
         //const diffQuery = `SELECT DATEDIFF`
-        const query = `SELECT bs.bookstoreName, a.activityName, a.price, a.image, a.deadline, DATEDIFF(a.deadline, curdate()) AS "dday" 
+        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image, DATEDIFF(a.deadline, curdate()) AS "dday" 
             FROM ${activityTable} a, ${bookstoreTable} bs
             WHERE a.bookstoreIdx = bs.bookstoreIdx
             AND a.categoryIdx = ${categoryIdx} 
@@ -73,8 +76,8 @@ const activity = {
         }
     },
     // 👻 활동 하나 자세히 보기
-    showActivityDetail: async (activityName)=>{
-        const query = `select *, DATEDIFF(deadline, curdate()) as "dday" from ${activityTable} where activityName = '${activityName}'`;
+    showActivityDetail: async (activityIdx)=>{
+        const query = `SELECT *, DATEDIFF(deadline, curdate()) AS "dday" FROM ${activityTable} WHERE activityIdx = '${activityIdx}'`;
         try{
             const result = await pool.queryParam(query);
             return result;
@@ -82,9 +85,6 @@ const activity = {
             console.log('showActivityDetail ERROR : ', err);
             throw err;
         }
-
-
-
     }
 }
 

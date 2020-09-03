@@ -13,5 +13,6 @@ router.get('/category/latest/:categoryIdx', ActivityController.showActivitiesByL
 
 router.get('/category/deadline/:categoryIdx', ActivityController.showActivitiesByDeadline); // 마감 임박순
 
-router.get('/detail/:activityName', ActivityController.showActivityDetail);
+router.get('/detail/:activityIdx', ActivityController.showActivityDetail);
+
 module.exports = router;
