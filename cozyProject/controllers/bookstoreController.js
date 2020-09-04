@@ -155,7 +155,7 @@ const bookstore = {
     },
     showBookstoreNumber : async (req, res) => {
         const sectionIdx = req.params.sectionIdx;    
-        
+        //sectionIdx 넘겨주는데 꼭 필요한가..
         try {
             const showbookstorenumber = await BookstoreModel.showBookstoreNumber(sectionIdx);
             if (!showbookstorenumber.length) {
