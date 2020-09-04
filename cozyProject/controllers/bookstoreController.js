@@ -2,6 +2,7 @@ const BookstoreModel = require('../models/bookstoreModel');
 const statusCode = require('../modules/statusCode');
 const resMessage = require('../modules/resMessage');
 const util = require('../modules/util');
+const pool = require('../modules/pool');
 
 const bookstore = {
     // orderByTastes: async (req, res) => {
@@ -137,6 +138,19 @@ const bookstore = {
             }
         }
         
+    },
+    showBookstoreFeed: async (req, res) => {
+        const bookstoreIdx = req.params.bookstoreIdx;
+
+        try {
+            const result = await BookstoreModel.showBookstoreFeed(bookstoreIdx);
+            if (!result.length) {
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.GET_BOOKSTORE_FAIL));
+            }
+            else return res.status(statusCode.OK).send(util.success(statusCode.OK, `${bookstoreIdx}번 ` + resMessage.GET_BOOKSTORE_SUCCESS, result[0]));
+        } catch (err) {
+            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+        }
     },
     showBookstoresBySection : async (req, res) => {
         const sectionIdx = req.params.sectionIdx;

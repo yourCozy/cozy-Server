@@ -51,10 +51,10 @@ const user = {
         }
     },
     updateProfile: async (userIdx, profile) => {
-        let query = `UPDATE ${table} SET profile = '${profile}' WHERE userIdx = ${userIdx}`;
+        let query = `UPDATE ${table} SET profileImg = '${profile}' WHERE userIdx = ${userIdx}`;
         try {
             await pool.queryParam(query);
-            query = `SELECT nickname, email, profile FROM ${table} WHERE userIdx = ${userIdx}`;
+            query = `SELECT userIdx, nickname, email, profileImg FROM ${table} WHERE userIdx = ${userIdx}`;
             const result = await pool.queryParam(query);
             return result;
         } catch (err) {

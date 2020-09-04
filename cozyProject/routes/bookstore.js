@@ -13,8 +13,10 @@ router.get('/recommendation', AuthMiddleware.checkToken, BookstoreController.sho
 
 router.get('/detail/:bookstoreIdx', AuthMiddleware.checkToken, BookstoreController.showDetail); // 북마크 때문에 토큰 필요
 
+router.get('/feed/:bookstoreIdx', BookstoreController.showBookstoreFeed); // 책방 상세_책방 피드
+
 router.get('/section/:sectionIdx', AuthMiddleware.checkToken, BookstoreController.showBookstoresBySection); // 북마크
 
-router.get('/search/:keyword', BookstoreController.searchByKeyword);
+router.get('/search/:keyword', BookstoreController.searchByKeyword); // sprint 2
 
 module.exports = router;

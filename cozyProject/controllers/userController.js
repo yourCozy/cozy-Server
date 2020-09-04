@@ -175,7 +175,7 @@ const user = {
         // call model - database
         // 결과값은 프로필에 대한 이미지 전달
         const result = await UserModel.updateProfile(userIdx, profile);
-        res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.UPDATE_PROFILE_SUCCESS, result));
+        res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.UPDATE_PROFILE_SUCCESS, result[0]));
     },
     findPassword: async(req, res)=>{
         const userEmail=req.body.email;
