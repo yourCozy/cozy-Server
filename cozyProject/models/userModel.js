@@ -4,10 +4,10 @@ const table2 ='bookstore';
 const table3 ='images';
 
 const user = {
-    signup: async (nickname, password, salt, email) => {
-        const fields = 'nickname, hashed, salt, email';
-        const questions = `?, ?, ?, ?`;
-        const values = [nickname, password, salt, email];
+    signup: async (nickname, password, salt, email, refreshToken) => {
+        const fields = 'nickname, hashed, salt, email, refreshToken';
+        const questions = `?, ?, ?, ?, ?`;
+        const values = [nickname, password, salt, email, refreshToken];
         const query = `INSERT INTO ${table}(${fields}) VALUES(${questions})`;
         try {
             const result = await pool.queryParamArr(query, values);
@@ -51,10 +51,10 @@ const user = {
         }
     },
     updateProfile: async (userIdx, profile) => {
-        let query = `UPDATE ${table} SET profile = '${profile}' WHERE userIdx = ${userIdx}`;
+        let query = `UPDATE ${table} SET profileImg = '${profile}' WHERE userIdx = ${userIdx}`;
         try {
             await pool.queryParam(query);
-            query = `SELECT nickname, email, profile FROM ${table} WHERE userIdx = ${userIdx}`;
+            query = `SELECT userIdx, nickname, email, profileImg FROM ${table} WHERE userIdx = ${userIdx}`;
             const result = await pool.queryParam(query);
             return result;
         } catch (err) {
@@ -103,6 +103,26 @@ const user = {
             throw err;
         }
     },
+    getUserIdxByEmail: async(email)=>{
+        const query = `select * from ${table} where email='${email}'`;
+        try{
+            const result = pool.queryParam(query);
+            return result;
+        }catch(err){
+            console.log('get userIdx by email ERR : ', err);
+            throw err;
+        }
+    },
+    getRefreshTokenByUserIdx: async(userIdx)=>{
+        const query = `select refreshToken from ${table} where userIdx = ${userIdx}`;
+        try{
+            const result = pool.queryParam(query);
+            return result;
+        }catch(err){
+            console.log('get refreshToken by userIdx ERR : ', err);
+            throw err;
+        }
+    }
 }
 
 module.exports = user;

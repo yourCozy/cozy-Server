@@ -7,54 +7,42 @@ const jwt = require('../modules/jwt');
 const mailer = require('../modules/mailer');
 const multer = require('../modules/multer');
 
+var moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
+
 const activity = {
-    showRecommendation: async (req, res) => {
-        
-    },
     showActivitiesByBookstore: async (req, res) => {
         // const userIdx = req.decoded.userIdx;
         const bookstoreIdx = req.params.bookstoreIdx;
         
         try {
             const activitiesByBookstore = await ActivityModel.showActivitiesByBookstore(bookstoreIdx);
-            if (!activitiesByBookstore.length) {
+            if (activitiesByBookstore.length==0) {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_ACT_DATA));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByBookstore));
+            else{
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByBookstore));
+            }
         } catch (err) {
-            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
     },
     // 우선 임시로 여기에 넣음
     /**
      * category: 18개
-     * 1. 영화 상영
-        2. 글쓰기 모임
-        3. 공간 대여
-        4. 독서 모임
-        5. 심야 책방
-        6. 전시, 공연
-        7. 책 추천
-        8. 위크숍
-        9. 북토크
-        10. 음악 감상
-        11. 낭독 모임
-        12. 묵독 모임
-        13. 필사 모임
-        14. 숙박
-        15. 만들기
-        16. 정기간행물
-        17. 강연
-        18. 마켓
+     * 1. 영화 상영 2. 글쓰기 모임 3. 공간 대여 4. 독서 모임 5. 심야 책방  6. 전시, 공연
+        7. 책 추천 8. 위크숍 9. 북토크 10. 음악 감상 11. 낭독 모임 12. 묵독 모임
+        13. 필사 모임 14. 숙박 15. 만들기 16. 정기간행물 17. 강연 18. 마켓
      */
     registerActivity: async (req, res) => {
-        const {bookstoreIdx, activityName, categoryIdx, deadline} = req.body;
+        const {bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image} = req.body;
 
         try{
-            if (!bookstoreIdx || !activityName || !categoryIdx) {
+            if (!bookstoreIdx || !activityName || !categoryIdx || !price) {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
             }
-            const idx = await ActivityModel.registerActivity(bookstoreIdx, activityName, categoryIdx, deadline);
+            const idx = await ActivityModel.registerActivity(bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image);
             
             if(idx === -1){
                 res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.ERROR_IN_INSERT_REVIEW));
@@ -62,7 +50,7 @@ const activity = {
                 res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.INSERT_REVIEW_SUCCESS, idx));
             }
         }catch(err){
-            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
     },
     showActivitiesByLatest: async (req, res) => {
@@ -75,7 +63,7 @@ const activity = {
             }
             else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByLatest));
         } catch (err) {
-            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
     },
     showActivitiesByDeadline: async (req, res) => {
@@ -88,7 +76,21 @@ const activity = {
             }
             else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByDeadline));
         } catch (err) {
-            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+        }
+    },
+    showActivityDetail: async (req, res)=>{
+        // const activityName = decodeURI(req.params.activityName);
+        const activityIdx = req.params.activityIdx;
+        try{
+            const result = await ActivityModel.showActivityDetail(activityIdx);
+            if(result.length==0){
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+            }else{
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, result));
+            }
+        }catch(err){
+            return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
     }
 }

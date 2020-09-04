@@ -2,27 +2,74 @@ const BookstoreModel = require('../models/bookstoreModel');
 const statusCode = require('../modules/statusCode');
 const resMessage = require('../modules/resMessage');
 const util = require('../modules/util');
+const pool = require('../modules/pool');
 
 const bookstore = {
-    registerRecommendation: async (req, res) => {
-        
-    },
+    // orderByTastes: async (req, res) => {
+    //     const userIdx = req.decoded.userIdx;
+    //     const tastesResult = await BookstoreModel.showTastes(userIdx);
+    //     const tastes = tastesResult[0].tastes;
+    //     const countZeroResult = await BookstoreModel.updateTasteCountToZero();
+    //     console.log(countZeroResult);
+    //     const result = await BookstoreModel.orderByTastes(userIdx, tastes);
+    //     try {
+    //         if (!result.length) {
+    //             return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+    //         }
+    //         else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, result));
+    //     } catch (err) {
+    //         res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+    //     }
+    // },
     showRecommendation : async (req, res) => {
-        const userIdx = req.decoded.userIdx;
-        // var autoLogin = req.cookies.autoLogin;
-        // console.log(autoLogin);
-        const bookstore = await BookstoreModel.showRecommendation(userIdx);
-        try {
-            if (!bookstore.length) {
-                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+        // 로그인 하지 않은 사용자를 위한 추천뷰, 토큰 인증 필요없음.
+        console.log(req.decoded);
+
+        if (req.decoded === undefined) {
+            const bookstoreForAny = await BookstoreModel.showRecommendation();
+            try {
+                if (!bookstoreForAny.length) {
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+                }
+                else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstoreForAny));
+            } catch (err) {
+                res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstore));
-        } catch (err) {
-            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
-        }
+        } else {
+            const userIdx = req.decoded.userIdx;
+            console.log(userIdx);
+
+            console.log('userIdx: ',userIdx);
+            // var autoLogin = req.cookies.autoLogin;
+            //var userIdx=req.session.userIdx;
+            const tastesResult = await BookstoreModel.showTastes(userIdx);
+            if (!tastesResult.length) {
+                const withoutTasteQuery = await BookstoreModel.showRecommendation();
+                try {
+                    if (!withoutTasteQuery.length) {
+                        return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+                    }
+                    else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, withoutTasteQuery));
+                } catch (err) {
+                    res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+                }
+            } else {
+                const tastes = tastesResult[0].tastes;
+                const countZeroResult = await BookstoreModel.updateTasteCountToZero();
+                console.log(countZeroResult);
+                const bookstore = await BookstoreModel.orderByTastes(userIdx, tastes);
+                try {
+                    if (!bookstore.length) {
+                        return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+                    }
+                    else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstore));
+                } catch (err) {
+                    res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+                }
+            }
+        }        
     },
     showDetail : async (req, res) => {
-        const userIdx = req.decoded.userIdx;
         const bookstoreIdx = req.params.bookstoreIdx;
 
         /**
@@ -65,28 +112,70 @@ const bookstore = {
         res.cookie('bookstores', bookstores, {
             maxAge: 60*60*1000*24
         });
-        const bookstore = await BookstoreModel.showDetail(userIdx, bookstoreIdx);
-        try {
-            if (bookstore.length === 0) {
-                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+
+        if (req.decoded === undefined) {
+            console.log(req.decoded);
+            const bookstoreForAny = await BookstoreModel.showDetailForAny(bookstoreIdx);
+            try {
+                if (bookstoreForAny.length === 0) {
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+                }
+                else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstoreForAny));
+            } catch (err) {
+                res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstore));
+        } else {
+            const userIdx = req.decoded.userIdx;
+            
+            const bookstore = await BookstoreModel.showDetail(userIdx, bookstoreIdx);
+            try {
+                if (bookstore.length === 0) {
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+                }
+                else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstore));
+            } catch (err) {
+                res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            }
+        }
+        
+    },
+    showBookstoreFeed: async (req, res) => {
+        const bookstoreIdx = req.params.bookstoreIdx;
+
+        try {
+            const result = await BookstoreModel.showBookstoreFeed(bookstoreIdx);
+            if (!result.length) {
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.GET_BOOKSTORE_FAIL));
+            }
+            else return res.status(statusCode.OK).send(util.success(statusCode.OK, `${bookstoreIdx}번 ` + resMessage.GET_BOOKSTORE_SUCCESS, result[0]));
         } catch (err) {
             res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
     },
     showBookstoresBySection : async (req, res) => {
         const sectionIdx = req.params.sectionIdx;
-        const userIdx = req.decoded.userIdx;
-        console.log('sectionIdx: ',sectionIdx);
-        try {
-            const bookstoreBySection = await BookstoreModel.showBookstoresBySection(userIdx, sectionIdx);
-            if (!bookstoreBySection.length) {
-                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+
+        if (req.decoded === undefined) {
+            try {
+                const bookstoreBySectionForAny = await BookstoreModel.showBookstoresBySectionForAny(sectionIdx);
+                if (!bookstoreBySectionForAny.length) {
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+                }
+                else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstoreBySectionForAny));
+            } catch (err) {
+                res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstoreBySection));
-        } catch (err) {
-            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+        } else {
+            const userIdx = req.decoded.userIdx;
+            try {
+                const bookstoreBySection = await BookstoreModel.showBookstoresBySection(userIdx, sectionIdx);
+                if (!bookstoreBySection.length) {
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+                }
+                else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstoreBySection));
+            } catch (err) {
+                res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            }
         }
     },
     searchByKeyword : async (req, res) => {

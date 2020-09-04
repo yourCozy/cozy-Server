@@ -5,6 +5,7 @@ module.exports = {
     // 회원가입
     CREATED_USER: '회원 가입 성공',
     DELETE_USER: '회원 탈퇴 성공',
+    CREATED_AND_LOGIN: '회원 가입 후 로그인 성공',
     ALREADY_ID: '이미 사용중인 아이디입니다.',
     ALREADY_EMAIL: '이미 등록된 이메일입니다.',
     AVAILABLE_EMAIL: '가입 가능한 이메일입니다.',
@@ -39,10 +40,18 @@ module.exports = {
     // 서점 데이터 관련
     NO_DATA: '서점 리스트가 없습니다.',
     READ_DATA_SUCCESS: '서점 리스트 조회 성공',
+    GET_BOOKSTORE_SUCCESS: '서점 조회 성공',
+    GET_BOOKSTORE_FAIL: '서점 조회 실패',
 
     // 활동 데이터 관련
     NO_ACT_DATA: '활동 리스트가 없습니다.',
     READ_ACT_DATA_SUCCESS: '활동 리스트 조회 성공',
+
+    // 취향 관련
+    REGISTER_TASTES_SUCCESS: '취향 등록 성공',
+    REGISTER_TASTES_FAIL: '취향 등록 실패',
+    UPDATE_TASTES_SUCCESS: '취향 수정 성공',
+    UPDATE_TASTES_FAIL: '취향 수정 실패',
 
     // cookie 관련
     COOKIE_SUCCESS: '쿠키가 저장되었습니다.',
@@ -75,6 +84,14 @@ module.exports = {
     SUCCESS_UPDATE_REVIEW_PHOTO: '후기 사진 업데이트 성공',
     NO_PHOTO: '업데이트할 후기 사진이 없습니다.', 
     REVIEW_UPDATING: '후기 수정 중...',
+
+    // 취향 관련
+    ALREADY_USER: '이미 등록된 사용자입니다.',
     
+    //소셜 로그인 관련
+    EMAIL_NICKNAME_MATCH_ERR : '해당 이메일로 회원가입이 되어있습니다.',
+    DELETE_SESSION: '세션을 삭제했습니다.(로그아웃 되었습니다.)',
+    
+    GET_REFRESH_TOKEN : 'userIdx에 해당하는 refreshToken입니다.',
     DB_ERROR: 'DB 오류'
 };
