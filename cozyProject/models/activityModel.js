@@ -23,7 +23,10 @@ const activity = {
     },
     registerActivity: async (bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image) => {
         // 사진 개수 필드 추가해야 함. 
+        // const dl = deadline.
         const date = moment().format('YYYY년 M월 D일 HH:mm');
+        // const dead = moment(new Date(2020, 8, 15, 23, 59, 59)).format('YYYY-MM-DD HH:mm:ss');
+        // console.log(dead);
         const fields = 'bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image, createdAt';
         // insert into activity(bookstoreIdx, activityName, categoryIdx, createdAt, deadline) values(1, "공연2", 6, "2020년 8월 22일", '2020-08-31');
         const values = [bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image, date];
