@@ -6,7 +6,7 @@ module.exports = {
     check : async(req, res, next)=>{
         if(req.session.userIdx === undefined){
             /**
-             * 로그인 페이지로 넘어가기
+             ** 로그인 페이지로 넘어가기
              */
             console.log('req.session.userIdx 없음. 로그인이 필요합니다.');
             return res.json(util.fail(statusCode.OK, resMessage.EXPIRED_TOKEN));

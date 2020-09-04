@@ -87,6 +87,9 @@ module.exports = {
 
     // 취향 관련
     ALREADY_USER: '이미 등록된 사용자입니다.',
+
+    //지역 관련
+    SUCCESS_SECTION : '지역별 서점 갯수 count 성공',
     
     //소셜 로그인 관련
     EMAIL_NICKNAME_MATCH_ERR : '해당 이메일로 회원가입이 되어있습니다.',
