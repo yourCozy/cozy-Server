@@ -5,6 +5,7 @@ const ActivityController = require('../controllers/activityController');
 
 //router.get('/recommendation', ActivityController.showRecommendation);
 
+
 router.get('/:bookstoreIdx', ActivityController.showActivitiesByBookstore);
 
 router.post('/', ActivityController.registerActivity);//😈sprint3

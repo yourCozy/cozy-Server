@@ -12,7 +12,7 @@ const userTable = 'user';
 const activity = {
     // 👻 디테일 뷰에서 활동 그리드 뷰로 보는거
     showActivitiesByBookstore: async (bookstoreIdx) => {
-        const query = `SELECT activityIdx, activityName, shortIntro, deadline, image, price FROM ${activityTable} WHERE bookstoreIdx = ${bookstoreIdx}`
+        const query = `SELECT activityIdx, activityName, shortIntro, image, price FROM ${activityTable} WHERE bookstoreIdx = ${bookstoreIdx}`
         try {
             const result = await pool.queryParam(query);
             return result;
@@ -42,12 +42,11 @@ const activity = {
     },
     // 👻 활동 탭에서 하나 클릭했을 때 -> 최신순
     showActivitiesByLatest: async (categoryIdx) => {
-        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image, DATEDIFF(a.deadline, curdate()) AS "dday"
+        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image
             FROM ${activityTable} a, ${bookstoreTable} bs 
             WHERE a.bookstoreIdx = bs.bookstoreIdx 
             AND a.categoryIdx = ${categoryIdx}
-            AND a.deadline - curdate() > -1
-            ORDER BY a.createdAt DESC;`;
+            ORDER BY a.deadline DESC;`;
         try {
             const result = await pool.queryParam(query);
             return result;
@@ -60,12 +59,11 @@ const activity = {
     showActivitiesByDeadline: async (categoryIdx) => {
         // 날짜 차이 가져오기 
         //const diffQuery = `SELECT DATEDIFF`
-        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image, DATEDIFF(a.deadline, curdate()) AS "dday" 
+        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image 
             FROM ${activityTable} a, ${bookstoreTable} bs
             WHERE a.bookstoreIdx = bs.bookstoreIdx
-            AND a.categoryIdx = ${categoryIdx} 
-            AND a.deadline - curdate() > -1
-            ORDER BY dday, a.createdAt DESC;`;
+            AND a.categoryIdx = ${categoryIdx}
+            ORDER BY a.createdAt DESC;`;
             // 아니면 마감일 지난 활동은 클라에서 비활성화 처리
         try {
             const result = await pool.queryParam(query);
@@ -77,7 +75,7 @@ const activity = {
     },
     // 👻 활동 하나 자세히 보기
     showActivityDetail: async (activityIdx)=>{
-        const query = `SELECT *, DATEDIFF(deadline, curdate()) AS "dday" FROM ${activityTable} WHERE activityIdx = '${activityIdx}'`;
+        const query = `SELECT * FROM ${activityTable} WHERE activityIdx = '${activityIdx}'`;
         try{
             const result = await pool.queryParam(query);
             return result;

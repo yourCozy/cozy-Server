@@ -7,6 +7,10 @@ const jwt = require('../modules/jwt');
 const mailer = require('../modules/mailer');
 const multer = require('../modules/multer');
 
+var moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
+
 const activity = {
     showActivitiesByBookstore: async (req, res) => {
         // const userIdx = req.decoded.userIdx;
@@ -17,7 +21,9 @@ const activity = {
             if (activitiesByBookstore.length==0) {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_ACT_DATA));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByBookstore));
+            else{
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByBookstore));
+            }
         } catch (err) {
             return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
