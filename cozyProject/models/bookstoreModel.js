@@ -189,7 +189,7 @@ const bookstore = {
                     }
                 }
                 locationResult[a].checked = checked;
-                locationResult[a].count = locationResult.length;
+                // locationResult[a].count = locationResult.length;
             }
             
             return locationResult;
