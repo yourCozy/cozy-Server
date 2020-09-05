@@ -5,7 +5,7 @@ const SocialController = require('../controllers/socialController');
 const AuthMiddleware = require('../middlewares/auth');
 
 // 카카오
-router.get('/kakao', SocialController.kakaoLogin);
+router.post('/social', SocialController.socialLogin);
 //router.get('/kakao/logout', SocialController.kakaoLogout);
 
 // 구글
