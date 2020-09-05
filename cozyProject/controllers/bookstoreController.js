@@ -3,6 +3,7 @@ const statusCode = require('../modules/statusCode');
 const resMessage = require('../modules/resMessage');
 const util = require('../modules/util');
 const pool = require('../modules/pool');
+const { async } = require('../models/bookstoreModel');
 
 const bookstore = {
     // orderByTastes: async (req, res) => {
@@ -148,6 +149,20 @@ const bookstore = {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.GET_BOOKSTORE_FAIL));
             }
             else return res.status(statusCode.OK).send(util.success(statusCode.OK, `${bookstoreIdx}번 ` + resMessage.GET_BOOKSTORE_SUCCESS, result[0]));
+        } catch (err) {
+            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+        }
+    },
+    showBookstoreNumber : async (req, res) => {
+        const sectionIdx = req.params.sectionIdx;    
+        //sectionIdx 넘겨주는데 꼭 필요한가..
+        try {
+            const showbookstorenumber = await BookstoreModel.showBookstoreNumber(sectionIdx);
+            if (!showbookstorenumber.length) {
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_SEARCH_DATA));
+                //섹션에 서점 데이터 없을 시
+            }
+            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SUCCESS_SECTION, showbookstorenumber));
         } catch (err) {
             res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }

@@ -5,7 +5,7 @@ const util = require('../modules/util');
 const jwt = require('../modules/jwt');
 
 const user = {
-    kakaoLogin: async (req, res)=>{
+    socialLogin: async (req, res)=>{
         const {email, nickname, refreshToken} = req.body;
         const checkEmailResult = await UserModel.checkUserByEmail(email);
         // 해당 이메일로 가입된 사용자가 있는 지 확인
@@ -84,14 +84,18 @@ const user = {
         */
     },
     callRefreshToken : async(req, res)=>{
-        const userIdx = req.decoded.userIdx;
-        const refreshToken = await UserModel.getRefreshTokenByUserIdx(userIdx);
-        //console.log('refreshToken : ', refreshToken[0].refreshToken);
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.GET_REFRESH_TOKEN, {
-            userIdx : userIdx,
-            refreshToken : refreshToken[0].refreshToken
-        }))
-
+        console.log('req.decoded : ', req.decoded);
+        if(req.decoded===undefined){
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.REQUIRE_LOGIN));
+        }else{
+            const userIdx = req.decoded.userIdx;
+            const refreshToken = await UserModel.getRefreshTokenByUserIdx(userIdx);
+            //console.log('refreshToken : ', refreshToken[0].refreshToken);
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.GET_REFRESH_TOKEN, {
+                userIdx : userIdx,
+                refreshToken : refreshToken[0].refreshToken
+            }));
+        }
     }
 }
 module.exports = user;

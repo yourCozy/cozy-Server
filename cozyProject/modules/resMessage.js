@@ -1,6 +1,7 @@
 module.exports = {
     NULL_VALUE: '필요한 값이 없습니다',
     OUT_OF_VALUE: '파라미터 값이 잘못되었습니다',
+    REQUIRE_LOGIN: '로그인이 필요한 api입니다.',
 
     // 회원가입
     CREATED_USER: '회원 가입 성공',
@@ -87,6 +88,9 @@ module.exports = {
 
     // 취향 관련
     ALREADY_USER: '이미 등록된 사용자입니다.',
+
+    //지역 관련
+    SUCCESS_SECTION : '지역별 서점 갯수 count 성공',
     
     //소셜 로그인 관련
     EMAIL_NICKNAME_MATCH_ERR : '해당 이메일로 회원가입이 되어있습니다.',

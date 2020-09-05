@@ -212,11 +212,25 @@ const bookstore = {
             const len = result.length;
             result.forEach(element => {
                 element.checked = 0;
-                element.count = len;
+                //element.count = len;
             });
             return result;
         } catch (err) {
             console.log('showBookstoresBySectionForAny ERROR : ',err);
+            throw err;
+        }
+    },
+    showBookstoreNumber: async (sectionIdx) => {
+        //sectionidx 의 cnt가 0이면 0으로 나오도록 고치기
+        const query = `SELECT sectionidx, COUNT(bookstoreIdx) AS count 
+                       FROM ${bookstoreTable} 
+                       GROUP BY sectionidx
+                       ORDER BY sectionidx`;
+        try {
+            const result = await pool.queryParam(query);
+            return result;
+        } catch (err) {
+            console.log('show BookstoreNumber ERROR : ',err);
             throw err;
         }
     },
