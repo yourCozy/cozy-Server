@@ -164,7 +164,7 @@ const bookstore = {
     },
     showBookstoresBySection: async (userIdx, sectionIdx) => {
         // location section별로
-        const location = `SELECT bs.bookstoreIdx, bs.bookstoreName, bs.hashtag1, bs.hashtag2, bs.hashtag3, bs.mainImg from ${bookstoreTable} bs
+        const location = `SELECT bs.bookstoreIdx, bs.bookstoreName, bs.location, bs.hashtag1, bs.hashtag2, bs.hashtag3, bs.mainImg from ${bookstoreTable} bs
                         WHERE bs.sectionIdx = ${sectionIdx};`;
 
         // checked된 책방만 seciton별로
@@ -205,7 +205,7 @@ const bookstore = {
     showBookstoresBySectionForAny: async (sectionIdx) => {
         // SELECT bs.bookstoreIdx, bs.bookstoreName, bs.hashtag1, bs.hashtag2, bs.hashtag3, bs.profileImg, bs.image1 from ${bookstoreTable} bs
         // WHERE bs.sectionIdx = ${sectionIdx};
-        const query = `SELECT bookstoreIdx, bookstoreName, hashtag1, hashtag2, hashtag3, mainImg from ${bookstoreTable} 
+        const query = `SELECT bookstoreIdx, bookstoreName, location, hashtag1, hashtag2, hashtag3, mainImg from ${bookstoreTable} 
                         WHERE sectionIdx = ${sectionIdx}`;
         try {
             const result = await pool.queryParam(query);
