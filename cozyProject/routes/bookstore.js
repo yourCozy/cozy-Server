@@ -19,6 +19,6 @@ router.get('/section/:sectionIdx', AuthMiddleware.checkToken, BookstoreControlle
 
 router.get('/search/:keyword', BookstoreController.searchByKeyword); // sprint 2
 
-router.get('/sectionnum', BookstoreController.showBookstoreNumber); //토큰필요 X
+router.get('/count/section', BookstoreController.showBookstoreNumber); //토큰필요 X
 
 module.exports = router;

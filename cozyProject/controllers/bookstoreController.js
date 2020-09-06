@@ -6,22 +6,6 @@ const pool = require('../modules/pool');
 const { async } = require('../models/bookstoreModel');
 
 const bookstore = {
-    // orderByTastes: async (req, res) => {
-    //     const userIdx = req.decoded.userIdx;
-    //     const tastesResult = await BookstoreModel.showTastes(userIdx);
-    //     const tastes = tastesResult[0].tastes;
-    //     const countZeroResult = await BookstoreModel.updateTasteCountToZero();
-    //     console.log(countZeroResult);
-    //     const result = await BookstoreModel.orderByTastes(userIdx, tastes);
-    //     try {
-    //         if (!result.length) {
-    //             return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
-    //         }
-    //         else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, result));
-    //     } catch (err) {
-    //         res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
-    //     }
-    // },
     showRecommendation : async (req, res) => {
         // 로그인 하지 않은 사용자를 위한 추천뷰, 토큰 인증 필요없음.
         console.log(req.decoded);
@@ -154,15 +138,31 @@ const bookstore = {
         }
     },
     showBookstoreNumber : async (req, res) => {
-        const sectionIdx = req.params.sectionIdx;    
+        // const sectionIdx = req.params.sectionIdx;    
         //sectionIdx 넘겨주는데 꼭 필요한가..
+
+        const sections = [{sectionIdx: 1}, {sectionIdx: 2}, {sectionIdx: 3}, {sectionIdx: 4}, {sectionIdx: 5}, {sectionIdx: 6}];
+
         try {
-            const showbookstorenumber = await BookstoreModel.showBookstoreNumber(sectionIdx);
-            if (!showbookstorenumber.length) {
-                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_SEARCH_DATA));
-                //섹션에 서점 데이터 없을 시
+            const numberOfBookstores = await BookstoreModel.showBookstoreNumber();
+
+            if (numberOfBookstores.length < 6) {
+                for (var a in sections) {
+                    for (var b in numberOfBookstores) {
+                        if (sections[a].sectionIdx === numberOfBookstores[b].sectionIdx) {
+                            sections[a].count = numberOfBookstores[b].count;
+                            break;
+                        }
+                        else {
+                            sections[a].count = 0;
+                        }
+                    }
+                }
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SUCCESS_SECTION, sections));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SUCCESS_SECTION, showbookstorenumber));
+            else {
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SUCCESS_SECTION, numberOfBookstores));
+            }
         } catch (err) {
             res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
