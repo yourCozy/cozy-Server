@@ -209,10 +209,8 @@ const bookstore = {
                         WHERE sectionIdx = ${sectionIdx}`;
         try {
             const result = await pool.queryParam(query);
-            const len = result.length;
             result.forEach(element => {
                 element.checked = 0;
-                //element.count = len;
             });
             return result;
         } catch (err) {
@@ -220,12 +218,11 @@ const bookstore = {
             throw err;
         }
     },
-    showBookstoreNumber: async (sectionIdx) => {
-        //sectionidx 의 cnt가 0이면 0으로 나오도록 고치기
-        const query = `SELECT sectionidx, COUNT(bookstoreIdx) AS count 
-                       FROM ${bookstoreTable} 
-                       GROUP BY sectionidx
-                       ORDER BY sectionidx`;
+    showBookstoreNumber: async () => {
+        const query = `SELECT sectionIdx, COUNT(bookstoreIdx) AS count 
+                        FROM ${bookstoreTable} 
+                        GROUP BY sectionIdx
+                        ORDER BY sectionIdx`;
         try {
             const result = await pool.queryParam(query);
             return result;
