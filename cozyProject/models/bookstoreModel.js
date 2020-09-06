@@ -12,7 +12,7 @@ const bookstore = {
         // TODO: 사용자별로 취향에 따라 검색, 북마크 여부 추가
         // const userQuery =  `SELECT bookstores FROM ${tasteTable} WHERE userIdx = ${userIdx}`;
 
-        const query = `SELECT bs.bookstoreIdx, bs.bookstoreName, bs.mainImg, bs.shortIntro1, bs.shortIntro2, bs.location FROM ${bookstoreTable} bs
+        const query = `SELECT bs.bookstoreIdx, bs.bookstoreName, bs.mainImg, bs.shortIntro1, bs.shortIntro2, bs.location, bs.hashtag1, bs.hashtag2, bs.hashtag3 FROM ${bookstoreTable} bs
                         ORDER BY bs.bookmark DESC LIMIT 8;`;
                         // bs.profileImg != 'NULL' AND bs.shortIntro1 != 'NULL' 나중에 추가해주기
         try {
@@ -83,7 +83,7 @@ const bookstore = {
             const bookmarkQuery = `SELECT * FROM ${bookmarksTable} WHERE userIdx = ${userIdx}`;
             const bookmarkResult = await pool.queryParam(bookmarkQuery);
             console.log(bookmarkResult);
-            let query = `SELECT bookstoreIdx, bookstoreName, mainImg, shortIntro1, shortIntro2, location FROM ${bookstoreTable} WHERE tasteCount > 0 ORDER BY tasteCount DESC LIMIT 8`;
+            let query = `SELECT bookstoreIdx, bookstoreName, mainImg, shortIntro1, shortIntro2, location, hashtag1, hashtag2, hashtag3 FROM ${bookstoreTable} WHERE tasteCount > 0 ORDER BY tasteCount DESC LIMIT 8`;
             result = await pool.queryParam(query);
 
             for (var i in result) {
