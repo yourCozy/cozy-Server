@@ -9,7 +9,7 @@ const tasteTable = 'taste';
 
 const mypage = {
     showInterest: async (userIdx) => {
-        let query = `SELECT A.bookstoreIdx, A.bookstoreName, A.mainImg, A.hashtag1, A.hashtag2, A.hashtag3
+        let query = `SELECT A.bookstoreIdx, A.bookstoreName, A.mainImg, A.hashtag1, A.hashtag2, A.hashtag3, A.location, A.shortIntro1, A.shortIntro2
                         FROM ${bookstoreTable} A, ${bookmarksTable} B
                         WHERE B.userIdx = ${userIdx} 
                         AND A.bookstoreIdx=B.bookstoreIdx
