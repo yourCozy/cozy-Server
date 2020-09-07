@@ -86,9 +86,10 @@ const activity = {
             throw err;
         }
     },
-    // 👻 활동 하나 자세히 보기
+    // 👻 활동 하나 자세히 보기, datediff 도 보내줘야 되는 것 같은데
     showActivityDetail: async (activityIdx)=>{
-        const query = `SELECT * FROM ${activityTable} WHERE activityIdx = '${activityIdx}'`;
+        const query = `SELECT activityIdx, activityName, bookstoreIdx, categoryIdx, categoryName, price, limitation, introduction, period, deadline, 
+        image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, DATEDIFF(deadline, today) AS "dday" FROM ${activityTable} WHERE activityIdx = '${activityIdx}'`;
         try{
             const result = await pool.queryParam(query);
             return result;
