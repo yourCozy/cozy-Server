@@ -12,7 +12,7 @@ const userTable = 'user';
 const activity = {
     // 👻 디테일 뷰에서 활동 그리드 뷰로 보는거
     showActivitiesByBookstore: async (bookstoreIdx) => {
-        const query = `SELECT activityIdx, activityName, shortIntro, image, price FROM ${activityTable} WHERE bookstoreIdx = ${bookstoreIdx}`
+        const query = `SELECT activityIdx, activityName, shortIntro, image1, price, DATEDIFF(deadline, today) AS "dday" FROM ${activityTable} WHERE bookstoreIdx = ${bookstoreIdx}`
         try {
             const result = await pool.queryParam(query);
             return result;
@@ -24,7 +24,7 @@ const activity = {
     registerActivity: async (bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image) => {
         // 사진 개수 필드 추가해야 함. 
         const date = moment().format('YYYY년 M월 D일 HH:mm');
-        const fields = 'bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image, createdAt';
+        const fields = 'bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, createdAt';
         // insert into activity(bookstoreIdx, activityName, categoryIdx, createdAt, deadline) values(1, "공연2", 6, "2020년 8월 22일", '2020-08-31');
         const values = [bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image, date];
         const questions = '?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?'
@@ -46,7 +46,7 @@ const activity = {
         // console.log(now);
         const updateQuery = `UPDATE ${activityTable} SET today = '${now}' WHERE categoryIdx = ${categoryIdx}`;
         //카테고리idx 맞으면 현재 시간 today 로 업데이트
-        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image, DATEDIFF(a.deadline, a.today) AS "dday"
+        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image1, DATEDIFF(a.deadline, a.today) AS "dday"
             FROM ${activityTable} a, ${bookstoreTable} bs 
             WHERE a.bookstoreIdx = bs.bookstoreIdx 
             AND a.categoryIdx = ${categoryIdx}
@@ -70,7 +70,7 @@ const activity = {
         // console.log(now);
         const updateQuery = `UPDATE ${activityTable} SET today = '${now}' WHERE categoryIdx = ${categoryIdx}`;
 
-        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image, DATEDIFF(a.deadline, a.today) AS "dday" 
+        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image1, DATEDIFF(a.deadline, a.today) AS "dday" 
             FROM ${activityTable} a, ${bookstoreTable} bs
             WHERE a.bookstoreIdx = bs.bookstoreIdx
             AND a.categoryIdx = ${categoryIdx} 
