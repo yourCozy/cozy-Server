@@ -138,7 +138,6 @@ const bookstore = {
         }
     },
     showBookstoreNumber : async (req, res) => {
-<<<<<<< HEAD
         // const sectionIdx = req.params.sectionIdx;    
         //sectionIdx 넘겨주는데 꼭 필요한가..
 
@@ -155,33 +154,10 @@ const bookstore = {
                             break;
                         }
                         else {
-=======
-        //section을 배열로
-        const sections = [{sectionIdx: 1}, {sectionIdx: 2}, {sectionIdx: 3}, {sectionIdx: 4}, {sectionIdx: 5}, {sectionIdx: 6}];
-        
-        try {
-            const numberOfBookstores = await BookstoreModel.showBookstoreNumber();
-            //6개의 결과가 나오지 않았다면
-            if (numberOfBookstores.length < 6) {
-                for (var a in sections) {
-                    for (var b in numberOfBookstores) {
-                        if (sections[a].sectionIdx === numberOfBookstores[b].sectionIdx) { 
-                            //sections[0].sectionIdx ..(1) == numberOfBookstores[0].sectionIdx ..(2)
-                            sections[a].count = numberOfBookstores[b].count;
-                            //쿼리를 돌린 후 sectionIdx 있는 2나 3인 경우는 동일하게 해줌
-                            break;
-                        }
-                        else {
-                            //그 외는 0으로 
->>>>>>> juju
                             sections[a].count = 0;
                         }
                     }
                 }
-<<<<<<< HEAD
-=======
-                //result 를 sections로
->>>>>>> juju
                 return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SUCCESS_SECTION, sections));
             }
             else {
