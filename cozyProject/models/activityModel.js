@@ -12,7 +12,9 @@ const userTable = 'user';
 const activity = {
     // 👻 디테일 뷰에서 활동 그리드 뷰로 보는거
     showActivitiesByBookstore: async (bookstoreIdx) => {
-        const query = `SELECT activityIdx, activityName, shortIntro, image1, price, DATEDIFF(deadline, today) AS "dday" FROM ${activityTable} WHERE bookstoreIdx = ${bookstoreIdx}`
+        const query = `SELECT activityIdx, activityName, shortIntro, image1, price, DATEDIFF(deadline, today) AS "dday" FROM ${activityTable} 
+        WHERE DATEDIFF(deadline, today) > -1 AND bookstoreIdx = ${bookstoreIdx}
+        ORDER BY dday, createdAt DESC;`; 
         try {
             const result = await pool.queryParam(query);
             return result;
