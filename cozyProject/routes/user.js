@@ -17,6 +17,7 @@ router.post('/uploadImage/:bookstoreIdx', upload.array('profile'), UserControlle
 
 router.post('/findpw', UserController.findPassword);
 
+
 /* 
     ✔️ update profile
     METHOD : POST
