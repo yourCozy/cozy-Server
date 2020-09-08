@@ -8,8 +8,8 @@ const user = {
     socialLogin: async (req, res)=>{
         const {id, nickname, refreshToken} = req.body;
         const checkidResult = await UserModel.checkUserById(id);
-        // 해당 이메일로 가입된 사용자가 있는 지 확인
-        if(checkidResult.length==1){
+        // 해당 id로 가입된 사용자가 있는 지 확인
+        if(checkidResult.length>0){
             //이미 가입된 사용자라면
             console.log('로그인 되었습니다.');
             const user = await UserModel.getUserIdxById(id);
@@ -24,13 +24,13 @@ const user = {
         }else{
             //가입되지 않은 사용자
             console.log('회원가입 후 로그인되었습니다.');
-            const userIdx = await UserModel.signup(nickname, '', '', email, refreshToken);
-            const user = await UserModel.getUserIdxByEmail(email);
+            const userIdx = await UserModel.socialsignup(nickname, id, refreshToken);
+            const user = await UserModel.getUserIdxById(id);
             const {token, _} = await jwt.sign(user[0]);
             return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.CREATED_AND_LOGIN, {
                 userIdx: user[0].userIdx,
                 nickname: user[0].nickname,
-                email: user[0].email,
+                id: user[0].id,
                 profile: user[0].profileImg,
                 jwtToken: token
             }));

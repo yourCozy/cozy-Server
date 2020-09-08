@@ -22,6 +22,24 @@ const user = {
             throw err;
         }
     },
+    socialsignup: async (nickname, id, refreshToken) => {
+        const fields = 'nickname, id, refreshToken';
+        const questions = `?, ?, ?`;
+        const values = [nickname, id, refreshToken];
+        const query = `INSERT INTO ${table}(${fields}) VALUES(${questions})`;
+        try {
+            const result = await pool.queryParamArr(query, values);
+            const insertId = result.insertId;
+            return insertId;
+        } catch (err) {
+            if (err.errno == 1062) {
+                console.log('signup ERROR : ', err.errno, err.code);
+                throw err;
+            }
+            console.log('signup ERROR : ', err);
+            throw err;
+        }
+    },
     checkUserByNickname: async(nickname)=>{
         const query = `select * from ${table} where nickname='${nickname}';`;
         try{
@@ -127,8 +145,13 @@ const user = {
             throw err;
         }
     },
+<<<<<<< HEAD
     getUserIdxByEmail: async(email)=>{
         const query = `select * from ${table} where email='${email}'`;
+=======
+    getUserIdxById: async(id)=>{
+        const query = `select * from ${table} where id='${id}'`;
+>>>>>>> juju
         try{
             const result = pool.queryParam(query);
             return result;
