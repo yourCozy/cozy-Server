@@ -6,12 +6,15 @@ const e = require('express');
 
 const mypage = {
     registerTastes: async (req, res) => {
+        if(req.headers.token === undefined) {
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.EMPTY_TOKEN));
+        }
+        
         const userIdx = req.decoded.userIdx;
         // let count = Object.keys(req.query).length; // json 객체 개수 반환
         
         var opt = Object.values(req.query); // json 객체의 value 값들을 배열로 반환
         // console.log(opt);
-
         const userResult = await MypageModel.checkUser(userIdx);
         if (userResult.length > 0) {
             return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.ALREADY_USER));

@@ -50,6 +50,20 @@ const user = {
             throw err;
         }
     },
+    checkUserById: async (id) => {
+        const query = `SELECT * FROM ${table} WHERE id = '${id}';`;
+        try {
+            const result = await pool.queryParam(query);
+            return result;
+        } catch (err) {
+            if (err.errno == 1062) {
+                console.log('checkUser ERROR : ', err.errno, err.code);
+                throw err;
+            }
+            console.log('checkUser ERROR : ', err);
+            throw err;
+        }
+    },
     updateProfile: async (userIdx, profile) => {
         let query = `UPDATE ${table} SET profileImg = '${profile}' WHERE userIdx = ${userIdx}`;
         try {
@@ -100,6 +114,16 @@ const user = {
             return result;
         }catch(err){
             console.log('update pw by email ERR : ',err);
+            throw err;
+        }
+    },
+    getUserIdxByEmail: async(email)=>{
+        const query = `select * from ${table} where email='${email}'`;
+        try{
+            const result = pool.queryParam(query);
+            return result;
+        }catch(err){
+            console.log('get userIdx by email ERR : ', err);
             throw err;
         }
     },
