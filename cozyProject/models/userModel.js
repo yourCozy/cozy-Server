@@ -145,13 +145,8 @@ const user = {
             throw err;
         }
     },
-<<<<<<< HEAD
-    getUserIdxByEmail: async(email)=>{
-        const query = `select * from ${table} where email='${email}'`;
-=======
     getUserIdxById: async(id)=>{
         const query = `select * from ${table} where id='${id}'`;
->>>>>>> juju
         try{
             const result = pool.queryParam(query);
             return result;
