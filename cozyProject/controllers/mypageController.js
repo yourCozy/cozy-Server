@@ -88,28 +88,24 @@ const mypage = {
             res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
     },
-    /*showmyInfo: async (req, res) => {
-        const userIdx = req.params.userIdx;
-        if (req.decoded === undefined) {
-            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.EMPTY_TOKEN));
-        } else {
-            const result = await MypageModel.showInfo(userIdx);
-            if(result.length == 0){
-
-        }
-
-        }
-        try {
-            const result = await MypageModel.updateTastes(userIdx, opt);
-
-            if (!result.length) {
-                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.UPDATE_TASTES_FAIL));
+    showmyInfo: async (req, res) => {
+        
+        //const {token, _} = await jwt.sign(user[0]);
+         if (req.decoded === undefined) { 
+              return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.EMPTY_TOKEN));
+         } else {
+            try {
+                const userIdx = req.decoded.userIdx;
+                const result = await MypageModel.showInfo(userIdx);
+                if (result.length>0) {
+                    return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SHOW_MYINFO_SUCCESS, result));
+                }
+                else return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.SHOW_MYINFO_FAIL));
+            } catch (err) {
+                res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.UPDATE_TASTES_SUCCESS, result[0]));
-        } catch (err) {
-            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
-    },*/
+    },
     updateBookmark: async (req, res) => {
         const bookstoreIdx = req.params.bookstoreIdx;
         if (req.decoded === undefined) {

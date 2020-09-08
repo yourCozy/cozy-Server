@@ -32,6 +32,16 @@ const mypage = {
             throw err;
         }
     },
+    showInfo: async (userIdx) => {
+       let query = `SELECT nickname, profileImg FROM ${userTable} WHERE userIdx = ${userIdx};`;
+       try { 
+            const result = await pool.queryParam(query);
+            return result;
+        } catch (err) {
+            console.log('show myInfo ERROR : ', err);
+            throw err;
+        }
+    }, 
     updateBookmark: async (userIdx, bookstoreIdx) => {
         const fields = 'userIdx, bookstoreIdx, checked';
         let query = `delete from ${bookmarksTable} where userIdx=${userIdx} and bookstoreIdx=${bookstoreIdx}`;//북마크 해제
