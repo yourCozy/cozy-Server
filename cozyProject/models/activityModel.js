@@ -12,8 +12,17 @@ const userTable = 'user';
 const activity = {
     // 👻 디테일 뷰에서 활동 그리드 뷰로 보는거
     showActivitiesByBookstore: async (bookstoreIdx) => {
-        const query = `SELECT activityIdx, activityName, shortIntro, image, price FROM ${activityTable} WHERE bookstoreIdx = ${bookstoreIdx}`
+        // TODO: dday 추가
+        const now = moment().format('YYYY-MM-DD HH:mm');
+        // console.log(now);
+        const updateQuery = `UPDATE ${activityTable} SET today = '${now}' WHERE bookstoreIdx = ${bookstoreIdx}`;
+
+        const query = `SELECT activityIdx, activityName, shortIntro, image, price, DATEDIFF(deadline, today) AS "dday" 
+                        FROM ${activityTable} 
+                        WHERE bookstoreIdx = ${bookstoreIdx}
+                        AND DATEDIFF(deadline, today) > -1`
         try {
+            await pool.queryParam(updateQuery);
             const result = await pool.queryParam(query);
             return result;
         } catch (err) {
@@ -46,7 +55,7 @@ const activity = {
         // console.log(now);
         const updateQuery = `UPDATE ${activityTable} SET today = '${now}' WHERE categoryIdx = ${categoryIdx}`;
         //카테고리idx 맞으면 현재 시간 today 로 업데이트
-        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image, DATEDIFF(a.deadline, a.today) AS "dday"
+        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.price, a.image, DATEDIFF(a.deadline, a.today) AS "dday"
             FROM ${activityTable} a, ${bookstoreTable} bs 
             WHERE a.bookstoreIdx = bs.bookstoreIdx 
             AND a.categoryIdx = ${categoryIdx}
@@ -70,7 +79,7 @@ const activity = {
         // console.log(now);
         const updateQuery = `UPDATE ${activityTable} SET today = '${now}' WHERE categoryIdx = ${categoryIdx}`;
 
-        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image, DATEDIFF(a.deadline, a.today) AS "dday" 
+        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.price, a.image, DATEDIFF(a.deadline, a.today) AS "dday" 
             FROM ${activityTable} a, ${bookstoreTable} bs
             WHERE a.bookstoreIdx = bs.bookstoreIdx
             AND a.categoryIdx = ${categoryIdx} 
@@ -88,9 +97,21 @@ const activity = {
     },
     // 👻 활동 하나 자세히 보기
     showActivityDetail: async (activityIdx)=>{
-        const query = `SELECT * FROM ${activityTable} WHERE activityIdx = '${activityIdx}'`;
+        // TODO: dday 추가
+        const now = moment().format('YYYY-MM-DD');
+        console.log(now);
+        const updateQuery = `UPDATE ${activityTable} SET today = '${now}' WHERE activityIdx = ${activityIdx}`;
+
+        const deadlineQuery = `SELECT deadline FROM ${activityTable} WHERE activityIdx = ${activityIdx}`;
+        // console.log()
+
+        const query = `SELECT activityIdx, activityName, categoryName, period, limitation, price, introduction, DATEDIFF(deadline, today) AS "dday" FROM ${activityTable} WHERE activityIdx = '${activityIdx}'`;
         try{
+            const deadlineResult = await pool.queryParam(deadlineQuery);
+            const dl = moment(deadlineResult[0]).format('YYYY-MM-DD');
+            await pool.queryParam(updateQuery);
             const result = await pool.queryParam(query);
+            result[0].deadline = dl;
             return result;
         }catch(err){
             console.log('showActivityDetail ERROR : ', err);
