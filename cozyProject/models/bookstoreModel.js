@@ -4,6 +4,7 @@ const { check } = require('../middlewares/session');
 const bookstoreTable = 'bookstore';
 // const imagesTable = 'images';
 const bookmarksTable = 'bookmarks';
+const bookstoreImgTable = 'bookstoreImg';
 const userTable = 'user';
 const tasteTable = 'taste';
 
@@ -179,8 +180,8 @@ const bookstore = {
         }
     },
     showBookstoreFeed: async (bookstoreIdx) => {
-        const query = `SELECT bookstoreIdx, image1, image2, image3, description 
-                        FROM ${bookstoreTable} WHERE bookstoreIdx = ${bookstoreIdx}`;
+        const query = `SELECT image1, text1, image2, text2, image3, text3, image4, text4, image5, text5, image6, text6, image7, text7 
+                        FROM ${bookstoreImgTable} WHERE bookstoreIdx = ${bookstoreIdx}`;
         try {
             const result = await pool.queryParam(query);
             return result;

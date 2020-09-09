@@ -4,6 +4,7 @@ const resMessage = require('../modules/resMessage');
 const util = require('../modules/util');
 const pool = require('../modules/pool');
 const { async } = require('../models/bookstoreModel');
+const { text } = require('express');
 
 const bookstore = {
     showRecommendation : async (req, res) => {
@@ -129,10 +130,38 @@ const bookstore = {
 
         try {
             const result = await BookstoreModel.showBookstoreFeed(bookstoreIdx);
+            var i=1;
+            var list=new Array();
+            var Json=new Object();
+            for(key in result[0]){
+                if(i==3){
+                    i=1;
+                    if(Json.image!==null || Json.text!==null){
+                        list.push(Json)
+                    }
+                    Json=new Object();
+                }
+                if(result[0][key]!==null && result[0][key]!=="" && i==1){
+                    Json.image=result[0][key];
+                }
+                if((result[0][key]===null || result[0][key]==="") && i==1){
+                    Json.image=null;
+                }
+                if(result[0][key]!==null && result[0][key]!=="" && i==2){
+                    Json.text=result[0][key];
+                }
+                if((result[0][key]===null || result[0][key]==="") && i==2){
+                    Json.text=null;
+                }
+                i+=1;
+            }
+            if(Json.image!==null || Json.text!==null){
+                list.push(Json)
+            }
             if (!result.length) {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.GET_BOOKSTORE_FAIL));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, `${bookstoreIdx}번 ` + resMessage.GET_BOOKSTORE_SUCCESS, result[0]));
+            else return res.status(statusCode.OK).send(util.success(statusCode.OK, `${bookstoreIdx}번 ` + resMessage.GET_BOOKSTORE_SUCCESS, list));
         } catch (err) {
             res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
