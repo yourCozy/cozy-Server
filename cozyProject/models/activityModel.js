@@ -12,6 +12,7 @@ const userTable = 'user';
 const activity = {
     // 👻 디테일 뷰에서 활동 그리드 뷰로 보는거
     showActivitiesByBookstore: async (bookstoreIdx) => {
+<<<<<<< HEAD
         // TODO: dday 추가
         const now = moment().format('YYYY-MM-DD HH:mm');
         // console.log(now);
@@ -21,6 +22,14 @@ const activity = {
                         FROM ${activityTable} 
                         WHERE bookstoreIdx = ${bookstoreIdx}
                         AND DATEDIFF(deadline, today) > -1`
+=======
+        const query = `SELECT activityIdx, activityName, shortIntro, image1, price, DATEDIFF(deadline, today) AS "dday" FROM ${activityTable} 
+        WHERE DATEDIFF(deadline, today) >= 0 AND bookstoreIdx = ${bookstoreIdx} 
+        UNION 
+        SELECT activityIdx, activityName, shortIntro, image1, price, DATEDIFF(deadline, today) AS "dday" FROM ${activityTable} 
+        WHERE DATEDIFF(deadline, today) < 0 AND bookstoreIdx = ${bookstoreIdx} 
+        ORDER BY dday DESC;`;      
+>>>>>>> juju
         try {
             await pool.queryParam(updateQuery);
             const result = await pool.queryParam(query);
