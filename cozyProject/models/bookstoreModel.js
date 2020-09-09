@@ -1,6 +1,6 @@
-
 const pool = require('../modules/pool');
 const e = require('express');
+const { check } = require('../middlewares/session');
 const bookstoreTable = 'bookstore';
 // const imagesTable = 'images';
 const bookmarksTable = 'bookmarks';
@@ -12,7 +12,6 @@ const bookstore = {
 
         // TODO: 사용자별로 취향에 따라 검색, 북마크 여부 추가
         // const userQuery =  `SELECT bookstores FROM ${tasteTable} WHERE userIdx = ${userIdx}`;
-
         const query = `SELECT bs.bookstoreIdx, bs.bookstoreName, bs.mainImg, bs.shortIntro1, bs.shortIntro2, bs.location, bs.hashtag1, bs.hashtag2, bs.hashtag3 FROM ${bookstoreTable} bs
                         ORDER BY bs.bookmark DESC LIMIT 8;`;
                         // bs.profileImg != 'NULL' AND bs.shortIntro1 != 'NULL' 나중에 추가해주기
@@ -26,6 +25,33 @@ const bookstore = {
             return result;
         } catch (err) {
             console.log('showRecommendation ERROR : ', err);
+            throw err;
+        }
+    },
+    showRecommendationByUser:async (userIdx)=>{
+        const query = `SELECT bs.bookstoreIdx, bs.bookstoreName, bs.mainImg, bs.shortIntro1, 
+        bs.shortIntro2, bs.location, bs.hashtag1, bs.hashtag2, bs.hashtag3
+        FROM ${bookstoreTable} bs
+        ORDER BY bs.bookmark DESC LIMIT 8;`;
+        const bookmarkQeury = `SELECT bookstoreIdx from ${bookmarksTable} where userIdx = ${userIdx};`;
+        try{
+            const result = await pool.queryParam(query);
+            const bookmarkResult = await pool.queryParam(bookmarkQeury);
+            
+            for(var a in result){
+                var checked=0;
+                for(var b in bookmarkResult){
+                    if(result[a].bookstoreIdx === bookmarkResult[b].bookstoreIdx){
+                        checked=1;
+                        break;
+                    }
+                }
+                result[a].checked = checked;
+                result[a].count = result.length;
+            }
+            return result;
+        }catch(err){
+            console.log('showRecommendationByUser ERROR : ', err);
             throw err;
         }
     },

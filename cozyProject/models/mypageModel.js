@@ -33,8 +33,8 @@ const mypage = {
         }
     },
     showInfo: async (userIdx) => {
-       let query = `SELECT nickname, profileImg FROM ${userTable} WHERE userIdx = ${userIdx};`;
-       try { 
+        let query = `SELECT nickname, profileImg FROM ${userTable} WHERE userIdx = ${userIdx};`;
+        try { 
             const result = await pool.queryParam(query);
             return result;
         } catch (err) {
@@ -47,7 +47,7 @@ const mypage = {
         let query = `delete from ${bookmarksTable} where userIdx=${userIdx} and bookstoreIdx=${bookstoreIdx}`;//북마크 해제
         const result = await module.exports.checkInterest(userIdx, bookstoreIdx);
         let query2 = `update ${bookstoreTable} set bookmark=bookmark-1 where bookstoreIdx=${bookstoreIdx}`;//북마크 -1
-        if(result === 0 ){
+        if(result === 0 ){// 관심책방으로 등록하기
             query = `insert into ${bookmarksTable} (${fields}) values (${userIdx}, ${bookstoreIdx}, 1)`;//북마크 설정
             query2 = `update ${bookstoreTable} set bookmark=bookmark+1 where bookstoreIdx=${bookstoreIdx}`;
         }

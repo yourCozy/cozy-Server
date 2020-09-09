@@ -94,9 +94,9 @@ const mypage = {
     showmyInfo: async (req, res) => {
         
         //const {token, _} = await jwt.sign(user[0]);
-         if (req.decoded === undefined) { 
-              return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.EMPTY_TOKEN));
-         } else {
+        if (req.decoded === undefined) { 
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.EMPTY_TOKEN));
+        } else {
             try {
                 const userIdx = req.decoded.userIdx;
                 const result = await MypageModel.showInfo(userIdx);
@@ -118,7 +118,7 @@ const mypage = {
             try {
                 const result = await MypageModel.updateBookmark(userIdx, bookstoreIdx);
                 let message = '북마크 체크';
-                if(result === 0){
+                if(result === 0){// 북마크 해제 됨
                     message = '북마크 해제';
                 }
                 return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.BOOKMARK_SUCCESS, {checked: result}));

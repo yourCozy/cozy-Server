@@ -29,7 +29,7 @@ const bookstore = {
             //var userIdx=req.session.userIdx;
             const tastesResult = await BookstoreModel.showTastes(userIdx);
             if (!tastesResult.length) {
-                const withoutTasteQuery = await BookstoreModel.showRecommendation();
+                const withoutTasteQuery = await BookstoreModel.showRecommendationByUser(userIdx);
                 try {
                     if (!withoutTasteQuery.length) {
                         return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
