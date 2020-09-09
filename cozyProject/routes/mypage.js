@@ -14,6 +14,8 @@ router.put('/interest/:bookstoreIdx', AuthMiddleware.checkToken, MypageControlle
 
 // 활동 관련 북마크 추가 에정
 
+router.get('/myinfo', AuthMiddleware.checkToken, MypageController.showmyInfo);
+
 router.get('/recent', MypageController.showRecent);
 
 module.exports = router;

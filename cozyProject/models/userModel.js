@@ -22,6 +22,24 @@ const user = {
             throw err;
         }
     },
+    socialsignup: async (nickname, id, refreshToken) => {
+        const fields = 'nickname, id, refreshToken';
+        const questions = `?, ?, ?`;
+        const values = [nickname, id, refreshToken];
+        const query = `INSERT INTO ${table}(${fields}) VALUES(${questions})`;
+        try {
+            const result = await pool.queryParamArr(query, values);
+            const insertId = result.insertId;
+            return insertId;
+        } catch (err) {
+            if (err.errno == 1062) {
+                console.log('signup ERROR : ', err.errno, err.code);
+                throw err;
+            }
+            console.log('signup ERROR : ', err);
+            throw err;
+        }
+    },
     checkUserByNickname: async(nickname)=>{
         const query = `select * from ${table} where nickname='${nickname}';`;
         try{
@@ -38,6 +56,20 @@ const user = {
     },
     checkUserByEmail: async (email) => {
         const query = `SELECT * FROM ${table} WHERE email = '${email}';`;
+        try {
+            const result = await pool.queryParam(query);
+            return result;
+        } catch (err) {
+            if (err.errno == 1062) {
+                console.log('checkUser ERROR : ', err.errno, err.code);
+                throw err;
+            }
+            console.log('checkUser ERROR : ', err);
+            throw err;
+        }
+    },
+    checkUserById: async (id) => {
+        const query = `SELECT * FROM ${table} WHERE id = '${id}';`;
         try {
             const result = await pool.queryParam(query);
             return result;
@@ -105,6 +137,16 @@ const user = {
     },
     getUserIdxByEmail: async(email)=>{
         const query = `select * from ${table} where email='${email}'`;
+        try{
+            const result = pool.queryParam(query);
+            return result;
+        }catch(err){
+            console.log('get userIdx by email ERR : ', err);
+            throw err;
+        }
+    },
+    getUserIdxById: async(id)=>{
+        const query = `select * from ${table} where id='${id}'`;
         try{
             const result = pool.queryParam(query);
             return result;
