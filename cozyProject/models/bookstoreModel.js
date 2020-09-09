@@ -20,6 +20,7 @@ const bookstore = {
             // const userResult = await pool.queryParam(userQuery);
             // console.log('userResult: ', userResult[0].bookstores);
             const result = await pool.queryParam(query);
+            //const query2 = 'SELECT checked from ${bookmarksTable} where userIdx = ${userIdx}'
             result.forEach(e => {
                 e.checked = 0;
             });
