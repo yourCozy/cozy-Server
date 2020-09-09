@@ -6,6 +6,10 @@ const e = require('express');
 
 const mypage = {
     registerTastes: async (req, res) => {
+        if (req.decoded === undefined) { 
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.EMPTY_TOKEN));
+        }
+        else{ 
         const userIdx = req.decoded.userIdx;
         // let count = Object.keys(req.query).length; // json 객체 개수 반환
         
@@ -28,7 +32,7 @@ const mypage = {
         }
 
         // 온보딩에서 취향 선택을 할 시에는 해시태그+문화활동 합쳐서 받음. 제일 처음에 뜨는 추천 탭에는 사용자의 취향선택과 가장많이 중복되는 책방부터 출력.
-
+    }
     },
     updateTastes: async (req, res) => {
         const userIdx = req.decoded.userIdx;
