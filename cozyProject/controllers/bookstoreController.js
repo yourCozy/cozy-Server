@@ -241,7 +241,7 @@ const bookstore = {
             if (!result.length) {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_SEARCH_DATA));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SUCCESS_SEARCH, result));
+            else return res.status(statusCode.OK).send(util.success(statusCode.OK, `'${keyword}' ` + resMessage.SUCCESS_SEARCH, result));
         } catch (err) {
             res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }

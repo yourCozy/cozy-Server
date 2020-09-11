@@ -271,10 +271,10 @@ const bookstore = {
         }
     },
     searchByKeyword: async (keyword) => {
-        //const match = 'bookstoreName, location, activity, shortIntro, shortIntro2, description, hashtag1, hashtag2, hashtag3';
+        const fields = 'bookstoreIdx, bookstoreName, location, notice, activities, shortIntro1, shortIntro2, description, hashtag1, hashtag2, hashtag3';
         //const query = `select bookstoreIdx, ${match} from ${bookstoreTable} where match (${match}) against('+${keyword}*' in boolean mode) order by bookmark desc;`
         // 키워드 한 개 검색 가능, 특수문자 가능, 이모티콘 불가능
-        const query = `select bs.* from ${bookstoreTable} bs
+        const query = `select ${fields} from ${bookstoreTable} bs
                         where (binary bs.bookstoreName like "%${keyword}%" 
                         or binary location like "%${keyword}%" 
                         or binary notice like "%${keyword}%" 
