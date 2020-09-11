@@ -80,7 +80,10 @@ const mypage = {
                     mainImg: null,
                     hashtag1: null,
                     hashtag2: null,
-                    hashtag3: null
+                    hashtag3: null,
+                    location: null,
+                    shortIntro1: null,
+                    shortIntro2: null
                 }));
             }else{
                 console.log(interest);
@@ -90,7 +93,7 @@ const mypage = {
             res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
     },
-    showmyInfo: async (req, res) => {
+    showMyInfo: async (req, res) => {
         
         //const {token, _} = await jwt.sign(user[0]);
         if (req.decoded === undefined) { 
