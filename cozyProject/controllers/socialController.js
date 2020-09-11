@@ -14,12 +14,14 @@ const user = {
             console.log('로그인 되었습니다.');
             const user = await UserModel.getUserIdxById(id);
             const {token, _} = await jwt.sign(user[0]);
+            user[0].islogined = 1 ;
             return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {
                 userIdx: user[0].userIdx,
                 nickname: user[0].nickname,
                 id: user[0].id,
                 profile: user[0].profileImg,
-                jwtToken: token
+                jwtToken: token,
+                is_logined: user[0].islogined
             }));
         }else{
             //가입되지 않은 사용자
@@ -27,12 +29,14 @@ const user = {
             const userIdx = await UserModel.socialsignup(nickname, id, refreshToken);
             const user = await UserModel.getUserIdxById(id);
             const {token, _} = await jwt.sign(user[0]);
+            user[0].islogined = 0 ;
             return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.CREATED_AND_LOGIN, {
                 userIdx: user[0].userIdx,
                 nickname: user[0].nickname,
                 id: user[0].id,
                 profile: user[0].profileImg,
-                jwtToken: token
+                jwtToken: token,
+                is_logined: user[0].islogined
             }));
         }
         /*
