@@ -26,7 +26,7 @@ const user = {
         }else{
             //가입되지 않은 사용자
             console.log('회원가입 후 로그인되었습니다.');
-            const userIdx = await UserModel.socialsignup(nickname, id, refreshToken);
+            const userIdx = await UserModel.socialsignup(nickname, id, refreshToken, accessToken);
             const user = await UserModel.getUserIdxById(id);
             const {token, _} = await jwt.sign(user[0]);
             user[0].islogined = 0 ;
