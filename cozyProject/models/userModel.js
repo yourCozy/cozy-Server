@@ -22,10 +22,10 @@ const user = {
             throw err;
         }
     },
-    socialsignup: async (nickname, id, refreshToken) => {
-        const fields = 'nickname, id, refreshToken';
-        const questions = `?, ?, ?`;
-        const values = [nickname, id, refreshToken];
+    socialsignup: async (nickname, id, refreshToken, accessToken) => {
+        const fields = 'nickname, id, refreshToken, accessToken';
+        const questions = `?, ?, ?, ?`;
+        const values = [nickname, id, refreshToken, accessToken];
         const query = `INSERT INTO ${table}(${fields}) VALUES(${questions})`;
         try {
             const result = await pool.queryParamArr(query, values);

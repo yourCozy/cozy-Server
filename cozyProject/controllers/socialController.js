@@ -6,7 +6,7 @@ const jwt = require('../modules/jwt');
 
 const user = {
     socialLogin: async (req, res)=>{
-        const {id, nickname, refreshToken} = req.body;
+        const {id, nickname, refreshToken, accessToken} = req.body;
         const checkidResult = await UserModel.checkUserById(id);
         // 해당 id로 가입된 사용자가 있는 지 확인
         if(checkidResult.length>0){
