@@ -12,7 +12,6 @@ const mypage = {
         else{ 
             const userIdx = req.decoded.userIdx;
             // let count = Object.keys(req.query).length; // json 객체 개수 반환
-        
             var opt = Object.values(req.query); // json 객체의 value 값들을 배열로 반환
             // console.log(opt);
             const userResult = await MypageModel.checkUser(userIdx);
