@@ -86,6 +86,17 @@ module.exports = {
     NO_PHOTO: '업데이트할 후기 사진이 없습니다.', 
     REVIEW_UPDATING: '후기 수정 중...',
 
+    //댓글 관련
+    INSERT_COMMENT_SUCCESS: '댓글이 작성되었습니다.',
+    ERROR_IN_INSERT_COMMENT: '댓글 작성이 실패하였습니다.',
+    NO_COMMENT: '작성된 댓글이 없습니다.',
+    SELECT_COMMENT: '댓글 조회 성공',
+    DELETE_COMMENT: '댓글 삭제 성공',
+    ERROR_IN_DELETE_COMMENT: '댓글 삭제 실패',
+    UPDATE_COMMENT: '댓글 수정 성공',
+    ERROR_IN_UPDATE_COMMENT: '댓글 수정 실패',
+    COMMENT_UPDATING: '댓글 수정 중...',
+
     // 취향 관련
     ALREADY_USER: '이미 등록된 사용자입니다.',
 
