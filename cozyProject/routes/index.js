@@ -18,6 +18,8 @@ router.use('/user', require('./user'));
 
 router.use('/auth', require('./auth'));
 
+router.use('/comment', require('./comment'));
+
 // router.use('/auth', require('./auth'));
 
 module.exports = router;
