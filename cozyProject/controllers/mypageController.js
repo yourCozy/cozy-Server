@@ -20,11 +20,11 @@ const mypage = {
             }
 
             try {
-               const result = await MypageModel.registerTastes(userIdx, opt);
-               if (!result.length) {
-                   return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.REGISTER_TASTES_FAIL));
-               }
-               else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.REGISTER_TASTES_SUCCESS, result[0]));
+                const result = await MypageModel.registerTastes(userIdx, opt);
+                if (!result.length) {
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.REGISTER_TASTES_FAIL));
+                }
+                else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.REGISTER_TASTES_SUCCESS, result[0]));
             } catch (err) {
                 res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
             }

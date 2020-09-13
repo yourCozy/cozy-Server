@@ -4,11 +4,11 @@ var router = express.Router();
 const AuthMiddleware = require('../middlewares/auth');
 const commentController = require('../controllers/commentController.js');
 
-router.get('/mycomments/:userIdx', AuthMiddleware.checkToken, commentController.showMyComments); //내가 쓴 댓글 보기
+router.get('/mycomments', AuthMiddleware.checkToken, commentController.showMyComments); //내가 쓴 댓글 보기
 
-router.post('/write/:bookstoreIdx', AuthMiddleware.checkToken, commentController.writeComment); //댓글 작성
+router.post('/write/:activityIdx', AuthMiddleware.checkToken, commentController.writeComment); //댓글 작성
 
-router.get('/show/:commentIdx', commentController.showComment); //댓글 보기
+router.get('/show/:activityIdx', AuthMiddleware.checkToken, commentController.showAllCommentsOfActivity); //활동의 모든 댓글 보기
 
 router.put('/update/:commentIdx', AuthMiddleware.checkToken, commentController.UpdateComment); //댓글 수정
 
