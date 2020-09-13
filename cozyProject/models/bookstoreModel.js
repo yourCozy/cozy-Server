@@ -69,8 +69,8 @@ const bookstore = {
         }
     },
     orderByTastes: async(userIdx, tastes) => {
-        let tastesArray = tastes.split(','); // / 도 나눠질 수 있도록 추가
-        // tastesArray = tastes.split('/'); // x
+        tastes = tastes.replace('/', ','); // / 를 , 로 치환 후 split
+        let tastesArray = tastes.split(','); 
         console.log(tastesArray);
         let count = 0;
 
@@ -111,15 +111,15 @@ const bookstore = {
             }
             const bookmarkQuery = `SELECT * FROM ${bookmarksTable} WHERE userIdx = ${userIdx}`;
             const bookmarkResult = await pool.queryParam(bookmarkQuery);
-            console.log(bookmarkResult);
+            // console.log(bookmarkResult);
             let query = `SELECT bookstoreIdx, bookstoreName, mainImg, shortIntro1, shortIntro2, location, hashtag1, hashtag2, hashtag3 FROM ${bookstoreTable} WHERE tasteCount > 0 ORDER BY tasteCount DESC LIMIT 8`;
             result = await pool.queryParam(query);
 
             for (var i in result) {
                 let checked = 0;
-                console.log('i: ', i);
-                console.log('bookmarkResult[i]: ', bookmarkResult[i]);
-                console.log(result[0].bookstoreIdx);
+                // console.log('i: ', i);
+                // console.log('bookmarkResult[i]: ', bookmarkResult[i]);
+                // console.log(result[0].bookstoreIdx);
                 for (var e in bookmarkResult) {
                     if (bookmarkResult[e].bookstoreIdx === result[i].bookstoreIdx) {
                         checked = 1;
