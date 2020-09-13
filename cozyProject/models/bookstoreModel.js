@@ -35,10 +35,10 @@ const bookstore = {
         bs.shortIntro2, bs.location, bs.hashtag1, bs.hashtag2, bs.hashtag3
         FROM ${bookstoreTable} bs
         ORDER BY bs.bookmark DESC LIMIT 8;`;
-        const bookmarkQeury = `SELECT bookstoreIdx from ${bookmarksTable} where userIdx = ${userIdx};`;
+        const bookmarkQuery = `SELECT bookstoreIdx from ${bookmarksTable} where userIdx = ${userIdx};`;
         try{
             const result = await pool.queryParam(query);
-            const bookmarkResult = await pool.queryParam(bookmarkQeury);
+            const bookmarkResult = await pool.queryParam(bookmarkQuery);
             
             for(var a in result){
                 var checked=0;
@@ -270,8 +270,8 @@ const bookstore = {
             throw err;
         }
     },
-    searchByKeyword: async (keyword) => {
-        const fields = 'bookstoreIdx, bookstoreName, location, notice, activities, shortIntro1, shortIntro2, description, hashtag1, hashtag2, hashtag3';
+    searchByKeywordForAny: async (keyword) => {
+        const fields = 'bookstoreIdx, bookstoreName, location, shortIntro1, shortIntro2, hashtag1, hashtag2, hashtag3';
         //const query = `select bookstoreIdx, ${match} from ${bookstoreTable} where match (${match}) against('+${keyword}*' in boolean mode) order by bookmark desc;`
         // 키워드 한 개 검색 가능, 특수문자 가능, 이모티콘 불가능
         const query = `select ${fields} from ${bookstoreTable} bs
@@ -287,14 +287,59 @@ const bookstore = {
                         or binary hashtag3 like "%${keyword}%")
                         order by bookmark desc;`;
         // console.log('search query : ', query);
+
         try {
             const result = await pool.queryParam(query);
+            for (var a in result) {
+                result[a].checked = 0;
+                result[a].count = result.length;
+            }
             return result;
         } catch (err) {
             console.log('search by keyword ERROR : ', err);
             throw err;
         }                
     },
+    searchByKeyword: async (userIdx, keyword) => {
+        const fields = 'bookstoreIdx, bookstoreName, location, shortIntro1, shortIntro2, hashtag1, hashtag2, hashtag3';
+        //const query = `select bookstoreIdx, ${match} from ${bookstoreTable} where match (${match}) against('+${keyword}*' in boolean mode) order by bookmark desc;`
+        // 키워드 한 개 검색 가능, 특수문자 가능, 이모티콘 불가능
+        const query = `select ${fields} from ${bookstoreTable} bs
+                        where (binary bs.bookstoreName like "%${keyword}%" 
+                        or binary location like "%${keyword}%" 
+                        or binary notice like "%${keyword}%" 
+                        or binary activities like "%${keyword}%" 
+                        or binary shortIntro1 like "%${keyword}%"
+                        or binary shortIntro2 like "%${keyword}%" 
+                        or binary description like "%${keyword}%" 
+                        or binary hashtag1 like "%${keyword}%" 
+                        or binary hashtag2 like "%${keyword}%" 
+                        or binary hashtag3 like "%${keyword}%")
+                        order by bookmark desc;`;
+        // console.log('search query : ', query);
+
+        const bookmarkQuery = `SELECT bookstoreIdx FROM ${bookmarksTable} WHERE userIdx = ${userIdx}`;
+        try {
+            const result = await pool.queryParam(query);
+            const bookmarkResult = await pool.queryParam(bookmarkQuery);
+
+            for (var a in result) {
+                var checked = 0;
+                for (var b in bookmarkResult) {
+                    if (result[a].bookstoreIdx === bookmarkResult[b].bookstoreIdx) {
+                        checked = 1;
+                        break;
+                    }
+                }
+                result[a].checked = checked;
+                result[a].count = result.length;
+            }
+            return result;
+        } catch (err) {
+            console.log('search by keyword ERROR : ', err);
+            throw err;
+        }
+    }
     
 }
 
