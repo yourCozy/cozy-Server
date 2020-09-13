@@ -17,7 +17,7 @@ router.get('/feed/:bookstoreIdx', BookstoreController.showBookstoreFeed); // 책
 
 router.get('/section/:sectionIdx', AuthMiddleware.checkToken, BookstoreController.showBookstoresBySection); // 북마크
 
-router.get('/search/:keyword', BookstoreController.searchByKeyword); // sprint 2
+router.get('/search/:keyword', AuthMiddleware.checkToken, BookstoreController.searchByKeyword); // sprint 2
 
 router.get('/count/section', BookstoreController.showBookstoreNumber); //토큰필요 X
 

@@ -227,24 +227,31 @@ const bookstore = {
         const keyword = decodeURI(req.params.keyword);
         console.log('search keyword : ', keyword);
 
-        // isConsonant: 주어진 문자가 자음인지 판단
-        // if (hangul.isConsonantAll(keyword)) {
-        //     console.log('한글로만 이루어져 있습니다!');
-        // }
-
-        // if (keyword === null) {
-        //     return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_KEYWORD));
-        // }
-
-        try {
-            const result = await BookstoreModel.searchByKeyword(keyword);
-            if (!result.length) {
-                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_SEARCH_DATA));
+        if (req.decoded === undefined) {
+            try {
+                const result = await BookstoreModel.searchByKeywordForAny(keyword);
+                if (!result.length) {
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_SEARCH_DATA));
+                } else {
+                    return res.status(statusCode.OK).send(util.success(statusCode.OK, `'${keyword}' ` + resMessage.SUCCESS_SEARCH, result));
+                }
+            } catch (err) {
+                res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, `'${keyword}' ` + resMessage.SUCCESS_SEARCH, result));
-        } catch (err) {
-            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+        } else {
+            const userIdx = req.decoded.userIdx;
+            try {
+                const result = await BookstoreModel.searchByKeyword(userIdx, keyword);
+                if (!result.length) {
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_SEARCH_DATA));
+                } else {
+                    return res.status(statusCode.OK).send(util.success(statusCode.OK, `'${keyword}'` + resMessage.SUCCESS_SEARCH, result));
+                }
+            } catch (err) {
+                res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            }
         }
+        
     }
 }
 
