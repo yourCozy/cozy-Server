@@ -3,7 +3,6 @@ var moment = require('moment');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
-const bookstoreTable = 'bookstore';
 const commentTable = 'comment';
 const userTable = 'user';
 
@@ -19,14 +18,20 @@ const comment = {
         }
     },
     writeComment: async(userIdx, activityIdx, content)=>{
-        const fields = 'userIdx, activityIdx, content, createdAt';
-        // "2020년 9월 12일 23:30 작성"
-        const date = moment().format('YYYY년 M월 D일 HH:mm 작성');
+        // "20.09.12 23:30" // 우선 제플린 뷰대로 작성, 수정 은 뺐음.
+        const date = moment().format('YY.MM.DD HH:mm');
         console.log(date);
-        const query = `insert into ${commentTable} (${fields}) values (${userIdx}, ${activityIdx}, '${content}', '${date}')`;
+
+        const fields = 'userIdx, activityIdx, content, createdAt';
+        const questions = '?, ?, ?, ?';
+        const values = [userIdx, activityIdx, content, date];
+        
+        // insert 같이 values 값 들어가는 것은 queryParamArr 함수 써주는 게 좋음~~
+        const query = `INSERT INTO ${commentTable} (${fields}) VALUES (${questions})`;
         try{    
-            const result = await pool.queryParam(query);
-            return result;
+            const result = await pool.queryParamArr(query, values);
+            const insertId = result.insertId;
+            return insertId;
         }catch(err){
             console.log('writeComment ERROR : ',err);
             throw err;
@@ -53,7 +58,7 @@ const comment = {
             const result = await pool.queryParam(query);
             return result;
         }catch(err){
-            console.log('show Comment ERROR : ',err);
+            console.log('check Comment ERROR : ',err);
             throw err;
         }
     },
@@ -68,7 +73,8 @@ const comment = {
         }
     },
     UpdateComment: async(commentIdx, content)=>{
-        const date = moment().format('YYYY년 M월 D일 HH:mm 수정');
+        // 우선 제플린 뷰대로 수정은 뻈음. 
+        const date = moment().format('YY.MM.DD HH:mm');
         const query = `update ${commentTable} set content = '${content}', createdAt = '${date}' where commentIdx = ${commentIdx}`;
         try{
             const result = await pool.queryParam(query);
