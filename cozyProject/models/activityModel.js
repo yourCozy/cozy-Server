@@ -125,6 +125,16 @@ const activity = {
             console.log('showActivityDetail ERROR : ', err);
             throw err;
         }
+    },
+    isActivityRegistered: async (activityIdx) => {
+        const query = `SELECT * FROM ${activityTable} WHERE activityIdx = ${activityIdx}`;
+        try {
+            const result = await pool.queryParam(query);
+            return result;
+        } catch (err) {
+            console.log('isActivityRegistered ERROR : ', err);
+            throw err;
+        }
     }
 }
 
