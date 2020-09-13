@@ -14,7 +14,6 @@ const comment = {
                 const result = await CommentModel.showMyComment(userIdx);
                 if(result.length === 0){
                     const nickname = await CommentModel.selectNickname(userIdx);
-                    console.log(nickname);
                     res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.NO_COMMENT, {
                         commentIdx: 0,
                         userIdx: nickname[0].userIdx,
