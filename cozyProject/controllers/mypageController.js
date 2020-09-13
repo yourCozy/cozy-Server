@@ -12,7 +12,6 @@ const mypage = {
         else{ 
             const userIdx = req.decoded.userIdx;
             // let count = Object.keys(req.query).length; // json 객체 개수 반환
-        
             var opt = Object.values(req.query); // json 객체의 value 값들을 배열로 반환
             // console.log(opt);
             const userResult = await MypageModel.checkUser(userIdx);
@@ -21,11 +20,11 @@ const mypage = {
             }
 
             try {
-               const result = await MypageModel.registerTastes(userIdx, opt);
-               if (!result.length) {
-                   return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.REGISTER_TASTES_FAIL));
-               }
-               else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.REGISTER_TASTES_SUCCESS, result[0]));
+                const result = await MypageModel.registerTastes(userIdx, opt);
+                if (!result.length) {
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.REGISTER_TASTES_FAIL));
+                }
+                else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.REGISTER_TASTES_SUCCESS, result[0]));
             } catch (err) {
                 res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
             }

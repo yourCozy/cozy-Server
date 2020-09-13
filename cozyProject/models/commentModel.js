@@ -18,12 +18,12 @@ const comment = {
             throw err;
         }
     },
-    writeComment: async(userIdx, bookstoreIdx, content)=>{
-        const fields = 'userIdx, bookstoreIdx, content, createdAt';
+    writeComment: async(userIdx, activityIdx, content)=>{
+        const fields = 'userIdx, activityIdx, content, createdAt';
         // "2020년 9월 12일 23:30 작성"
         const date = moment().format('YYYY년 M월 D일 HH:mm 작성');
         console.log(date);
-        const query = `insert into ${commentTable} (${fields}) values (${userIdx}, ${bookstoreIdx}, '${content}', '${date}')`;
+        const query = `insert into ${commentTable} (${fields}) values (${userIdx}, ${activityIdx}, '${content}', '${date}')`;
         try{    
             const result = await pool.queryParam(query);
             return result;
@@ -46,21 +46,9 @@ const comment = {
             throw err;
         }
     },
-    showComment: async(commentIdx)=>{
-        const query = `SELECT c.*, u.nickname FROM ${commentTable} c, ${userTable} u 
-                        WHERE c.commentIdx = ${commentIdx} 
-                        AND u.userIdx = c.userIdx`;
-        try{
-            const result = await pool.queryParam(query);
-            return result;
-        }catch(err){
-            console.log('show Comment ERROR : ',err);
-            throw err;
-        }
-    },
     checkComment: async(commentIdx)=>{
         const query = `SELECT * FROM ${commentTable} 
-                        WHERE commentIdx = ${commentIdx}`;
+                        WHERE commentIdx = ${commentIdx};`;
         try{
             const result = await pool.queryParam(query);
             return result;
@@ -70,7 +58,7 @@ const comment = {
         }
     },
     deleteComment: async(commentIdx)=>{
-        const query = `delete from ${commentTable} where commentIdx=${commentIdx}`;
+        const query = `delete from ${commentTable} where commentIdx=${commentIdx};`;
         try{
             await pool.queryParam(query);
             return 1;
@@ -90,6 +78,17 @@ const comment = {
             throw err;
         }
     },
+    showAllComment: async(activityIdx)=>{
+        const query = `select c.*, u.nickname from ${commentTable} c, ${userTable} u where c.activityIdx = ${activityIdx} and c.userIdx = u.userIdx order by createdAt DESC`;
+        //order by createAt 하면 시간이 저장되지 않아 약간의 오차 발생
+        try{
+            const result = await pool.queryParam(query);
+            return result;
+        }catch(err){
+            console.log('Show All comment ERROR : ', err);
+            throw err;
+        }
+    }
 }
 
 module.exports = comment;
