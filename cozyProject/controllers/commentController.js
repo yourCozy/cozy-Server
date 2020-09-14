@@ -75,25 +75,28 @@ const comment = {
                     return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_COMMENT));
                 }
                 const result = await CommentModel.deleteComment(commentIdx);
-                if(result === 1){
-                    const activityIdx = comment[0].activityIdx;
-                    const result = await CommentModel.showAllComment(activityIdx);
+                 if(result !== 1){
+                //     const activityIdx = comment[0].activityIdx;
+                //     const result = await CommentModel.showAllComment(activityIdx);
                     
-                    if(result.length===0){
-                        return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_COMMENT));
-                    }else{
-                        for(var i = 0; i<result.length; i++){
-                            if(result[i].userIdx==userIdx){
-                                result[i].mine = 1
-                            }else{
-                                result[i].mine = 0
-                            }
-                        }
-                        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.DELETE_COMMENT, result));
-                    }
+                //     if(result.length===0){
+                //         return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_COMMENT));
+                //     }else{
+                //         for(var i = 0; i<result.length; i++){
+                //             if(result[i].userIdx==userIdx){
+                //                 result[i].mine = 1
+                //             }else{
+                //                 result[i].mine = 0
+                //             }
+                //         }
+                    res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.ERROR_IN_DELETE_COMMENT));
+                      
+                    //}
                     //res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.DELETE_COMMENT, {commentIdx: commentIdx}));
                 }else{
-                    res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.ERROR_IN_DELETE_COMMENT));
+                    return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.DELETE_COMMENT, {
+                        commentIdx: commentIdx
+                    }));
                 }
             }catch(err){
                 res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
@@ -125,7 +128,7 @@ const comment = {
     // 댓글 수정, 토큰 필요
     UpdateComment : async(req, res)=>{
         const commentIdx = req.params.commentIdx;
-        let {activityIdx, content}= req.body;
+        let {content}= req.body;
         if (req.decoded === undefined) {
             return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.EMPTY_TOKEN));
         } else {
@@ -134,21 +137,22 @@ const comment = {
                 if(!content){
                     return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
                 }
-                await CommentModel.UpdateComment(commentIdx, content);
-                const result = await CommentModel.showAllComment(activityIdx);
-                if(result.length===0){
-                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_COMMENT));
-                }else{
-                    const userIdx = req.decoded.userIdx;
-                    for(var i = 0; i<result.length; i++){
-                        if(result[i].userIdx==userIdx){
-                            result[i].mine = 1
-                        }else{
-                            result[i].mine = 0
-                        }
-                    }
-                    return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.UPDATE_COMMENT, result));
-                }
+                const result = await CommentModel.UpdateComment(commentIdx, content);
+                // const result = await CommentModel.showAllComment(activityIdx);
+                // if(result.length===0){
+                //     return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_COMMENT));
+                // }else{
+                //     const userIdx = req.decoded.userIdx;
+                //     for(var i = 0; i<result.length; i++){
+                //         if(result[i].userIdx==userIdx){
+                //             result[i].mine = 1
+                //         }else{
+                //             result[i].mine = 0
+                //         }
+                //     }
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.UPDATE_COMMENT, {
+                    commentIdx : commentIdx}));
+                //}
                 /*
                 res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.UPDATE_COMMENT,
                         result[0]
