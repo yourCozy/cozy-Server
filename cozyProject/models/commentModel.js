@@ -67,6 +67,7 @@ const comment = {
         try{
             await pool.queryParam(query);
             return 1;
+            //return commentIdx;
         }catch(err){
             console.log('deleteComment ERROR : ',err);
             throw err;
