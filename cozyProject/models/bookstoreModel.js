@@ -271,21 +271,28 @@ const bookstore = {
         }
     },
     searchByKeywordForAny: async (keyword) => {
-        const fields = 'bookstoreIdx, bookstoreName, location, shortIntro1, shortIntro2, hashtag1, hashtag2, hashtag3';
+        const fields = 'bs.bookstoreIdx, bookstoreName, location, shortIntro1, shortIntro2, hashtag1, hashtag2, hashtag3';
         //const query = `select bookstoreIdx, ${match} from ${bookstoreTable} where match (${match}) against('+${keyword}*' in boolean mode) order by bookmark desc;`
         // 키워드 한 개 검색 가능, 특수문자 가능, 이모티콘 불가능
-        const query = `select ${fields} from ${bookstoreTable} bs
-                        where (binary bs.bookstoreName like "%${keyword}%" 
-                        or binary location like "%${keyword}%" 
-                        or binary notice like "%${keyword}%" 
-                        or binary activities like "%${keyword}%" 
-                        or binary shortIntro1 like "%${keyword}%"
-                        or binary shortIntro2 like "%${keyword}%" 
-                        or binary description like "%${keyword}%" 
-                        or binary hashtag1 like "%${keyword}%" 
-                        or binary hashtag2 like "%${keyword}%" 
-                        or binary hashtag3 like "%${keyword}%")
-                        order by bookmark desc;`;
+        const query = `SELECT ${fields} FROM ${bookstoreTable} bs, ${bookstoreImgTable} bi
+                        WHERE bs.bookstoreIdx = bi.bookstoreIdx 
+                        AND (binary bs.bookstoreName like "%${keyword}%" 
+                        or binary bs.location like "%${keyword}%" 
+                        or binary bs.notice like "%${keyword}%" 
+                        or binary bs.activities like "%${keyword}%" 
+                        or binary bs.shortIntro1 like "%${keyword}%"
+                        or binary bs.shortIntro2 like "%${keyword}%" 
+                        or binary bs.hashtag1 like "%${keyword}%" 
+                        or binary bs.hashtag2 like "%${keyword}%" 
+                        or binary bs.hashtag3 like "%${keyword}%"
+                        or binary bi.text1 like "%${keyword}%"
+                        or binary bi.text2 like "%${keyword}%" 
+                        or binary bi.text3 like "%${keyword}%" 
+                        or binary bi.text4 like "%${keyword}%" 
+                        or binary bi.text5 like "%${keyword}%" 
+                        or binary bi.text6 like "%${keyword}%" 
+                        or binary bi.text7 like "%${keyword}%")
+                        order by bs.bookmark desc;`;
         // console.log('search query : ', query);
 
         try {
@@ -301,21 +308,28 @@ const bookstore = {
         }                
     },
     searchByKeyword: async (userIdx, keyword) => {
-        const fields = 'bookstoreIdx, bookstoreName, location, shortIntro1, shortIntro2, hashtag1, hashtag2, hashtag3';
+        const fields = 'bs.bookstoreIdx, bookstoreName, location, shortIntro1, shortIntro2, hashtag1, hashtag2, hashtag3';
         //const query = `select bookstoreIdx, ${match} from ${bookstoreTable} where match (${match}) against('+${keyword}*' in boolean mode) order by bookmark desc;`
         // 키워드 한 개 검색 가능, 특수문자 가능, 이모티콘 불가능
-        const query = `select ${fields} from ${bookstoreTable} bs
-                        where (binary bs.bookstoreName like "%${keyword}%" 
-                        or binary location like "%${keyword}%" 
-                        or binary notice like "%${keyword}%" 
-                        or binary activities like "%${keyword}%" 
-                        or binary shortIntro1 like "%${keyword}%"
-                        or binary shortIntro2 like "%${keyword}%" 
-                        or binary description like "%${keyword}%" 
-                        or binary hashtag1 like "%${keyword}%" 
-                        or binary hashtag2 like "%${keyword}%" 
-                        or binary hashtag3 like "%${keyword}%")
-                        order by bookmark desc;`;
+        const query = `SELECT ${fields} FROM ${bookstoreTable} bs, ${bookstoreImgTable} bi
+                        WHERE bs.bookstoreIdx = bi.bookstoreIdx 
+                        AND (binary bs.bookstoreName like "%${keyword}%" 
+                        or binary bs.location like "%${keyword}%" 
+                        or binary bs.notice like "%${keyword}%" 
+                        or binary bs.activities like "%${keyword}%" 
+                        or binary bs.shortIntro1 like "%${keyword}%"
+                        or binary bs.shortIntro2 like "%${keyword}%" 
+                        or binary bs.hashtag1 like "%${keyword}%" 
+                        or binary bs.hashtag2 like "%${keyword}%" 
+                        or binary bs.hashtag3 like "%${keyword}%"
+                        or binary bi.text1 like "%${keyword}%"
+                        or binary bi.text2 like "%${keyword}%" 
+                        or binary bi.text3 like "%${keyword}%" 
+                        or binary bi.text4 like "%${keyword}%" 
+                        or binary bi.text5 like "%${keyword}%" 
+                        or binary bi.text6 like "%${keyword}%" 
+                        or binary bi.text7 like "%${keyword}%")
+                        order by bs.bookmark desc;`;
         // console.log('search query : ', query);
 
         const bookmarkQuery = `SELECT bookstoreIdx FROM ${bookmarksTable} WHERE userIdx = ${userIdx}`;
