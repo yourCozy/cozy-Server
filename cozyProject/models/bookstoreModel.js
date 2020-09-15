@@ -271,7 +271,7 @@ const bookstore = {
         }
     },
     searchByKeywordForAny: async (keyword) => {
-        const fields = 'bs.bookstoreIdx, bookstoreName, location, shortIntro1, shortIntro2, hashtag1, hashtag2, hashtag3';
+        const fields = 'bs.bookstoreIdx, bookstoreName, mainImg, location, shortIntro1, shortIntro2, hashtag1, hashtag2, hashtag3';
         //const query = `select bookstoreIdx, ${match} from ${bookstoreTable} where match (${match}) against('+${keyword}*' in boolean mode) order by bookmark desc;`
         // 키워드 한 개 검색 가능, 특수문자 가능, 이모티콘 불가능
         const query = `SELECT ${fields} FROM ${bookstoreTable} bs, ${bookstoreImgTable} bi
@@ -308,7 +308,7 @@ const bookstore = {
         }                
     },
     searchByKeyword: async (userIdx, keyword) => {
-        const fields = 'bs.bookstoreIdx, bookstoreName, location, shortIntro1, shortIntro2, hashtag1, hashtag2, hashtag3';
+        const fields = 'bs.bookstoreIdx, bookstoreName, mainImg, location, shortIntro1, shortIntro2, hashtag1, hashtag2, hashtag3';
         //const query = `select bookstoreIdx, ${match} from ${bookstoreTable} where match (${match}) against('+${keyword}*' in boolean mode) order by bookmark desc;`
         // 키워드 한 개 검색 가능, 특수문자 가능, 이모티콘 불가능
         const query = `SELECT ${fields} FROM ${bookstoreTable} bs, ${bookstoreImgTable} bi
