@@ -86,7 +86,7 @@ const comment = {
         }
     },
     showAllComment: async(activityIdx)=>{
-        const query = `select c.*, u.nickname from ${commentTable} c, ${userTable} u where c.activityIdx = ${activityIdx} and c.userIdx = u.userIdx order by createdAt DESC`;
+        const query = `select c.*, u.nickname, u.profileImg from ${commentTable} c, ${userTable} u where c.activityIdx = ${activityIdx} and c.userIdx = u.userIdx order by createdAt DESC`;
         //order by createAt 하면 시간이 저장되지 않아 약간의 오차 발생
         try{
             const result = await pool.queryParam(query);
