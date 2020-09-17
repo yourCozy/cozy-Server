@@ -20,6 +20,8 @@ router.use('/auth', require('./auth'));
 
 router.use('/comment', require('./comment'));
 
+router.use('/register', require('./register'));
+
 // router.use('/auth', require('./auth'));
 
 module.exports = router;
