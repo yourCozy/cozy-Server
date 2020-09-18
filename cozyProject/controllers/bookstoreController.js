@@ -98,9 +98,12 @@ const bookstore = {
         res.cookie('bookstores', bookstores, {
             maxAge: 60*60*1000*24
         });
+        console.log('req.cookies.bookstores: ',req.cookies.bookstores);
+        console.log('req.cookies: ',req.cookies);
+        console.log('startTime: ', req._startTime);
 
         if (req.decoded === undefined) {
-            console.log(req.decoded);
+            // console.log(req.decoded);
             const bookstoreForAny = await BookstoreModel.showDetailForAny(bookstoreIdx);
             try {
                 if (bookstoreForAny.length === 0) {
