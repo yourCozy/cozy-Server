@@ -6,6 +6,10 @@ const pool = require('../modules/pool');
 const { async } = require('../models/bookstoreModel');
 const { text } = require('express');
 
+var moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
+
 const bookstore = {
     showRecommendation : async (req, res) => {
         // 로그인 하지 않은 사용자를 위한 추천뷰, 토큰 인증 필요없음.
@@ -57,7 +61,7 @@ const bookstore = {
     },
     showDetail : async (req, res) => {
         const bookstoreIdx = req.params.bookstoreIdx;
-
+   
         /**
          * 🔥 cookie 🔥
          * 현재 사용자가 가지고 있는 쿠키 확인: req.cookies.[cookie_name]
@@ -85,7 +89,6 @@ const bookstore = {
         }
         //console.log('bb: ', bookstores);
         //console.log('result[0].bookstoreIdx: ', result[0].bookstoreIdx);
-        
         // 서점 리스트가 정상적으로 있다면
         // if (result[0].bookstoreIdx !== undefined) {
         //     if(bookstores.indexOf(result[0].bookstoreIdx) === -1){
@@ -108,12 +111,28 @@ const bookstore = {
             }
         console.log('result[0] : ',result[0].bookstoreIdx);
         console.log('bookstores <cookies> : ',bookstores);
+        
         res.cookie('bookstores', bookstores, {
-            maxAge: 60*60*1000*24
+            // maxAge: 60*60*1000*24 //쿠키유효시간 24시간
+            maxAge: 30*1000
         });
+<<<<<<< HEAD
         console.log('req.cookies.bookstores: ',req.cookies.bookstores);
         console.log('req.cookies: ',req.cookies);
         console.log('startTime: ', req._startTime);
+=======
+        // var date = new Date();
+        // var fmt = 'YY.MM.DD HH:mm:ss';
+        // var now = moment(date).format(fmt); //지금
+        // var booknow = bookstoreIdx+"\/"+now ;
+        // console.log(booknow);
+        // var ary = [];
+        // ary.push(booknow);
+        // for(var item of ary ){
+        //    console.log(item);
+        //    console.log(ary.length);
+        // }
+>>>>>>> juju
 
         if (req.decoded === undefined) {
             // console.log(req.decoded);
@@ -122,7 +141,9 @@ const bookstore = {
                 if (bookstoreForAny.length === 0) {
                     return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
                 }
-                else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstoreForAny));
+                else {
+                    return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstoreForAny));
+                }
             } catch (err) {
                 res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
             }
@@ -134,8 +155,10 @@ const bookstore = {
                 if (bookstore.length === 0) {
                     return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
                 }
-                else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstore));
-            } catch (err) {
+                else {
+                    return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_DATA_SUCCESS, bookstore));
+                }
+                } catch (err) {
                 res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
             }
         }
