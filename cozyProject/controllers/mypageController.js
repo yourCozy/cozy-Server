@@ -138,7 +138,7 @@ const mypage = {
             return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.NO_RECENT_BOOKSTORES));
         }
 
-        console.log(bookstores);
+        // console.log(bookstores);
         
         // json 객체 담을 배열
         var cookies=[];
@@ -147,7 +147,9 @@ const mypage = {
         }
         var obj =[];
         cookies.forEach(e => obj.push(e[0]));
-        console.log('obj : ', obj)
+        // console.log('obj : ', obj);
+        
+        console.log(req.cookies.Expires);
         return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.RECENT_BOOKSTORES, obj));
         
     },

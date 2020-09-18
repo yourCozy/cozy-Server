@@ -80,19 +80,32 @@ const bookstore = {
         }
         // parseInt(bookstoreIdx): integer 타입으로 형변환
         const result = await BookstoreModel.checkBookStore(bookstoreIdx);
+        if (result.length == 0){
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+        }
         //console.log('bb: ', bookstores);
         //console.log('result[0].bookstoreIdx: ', result[0].bookstoreIdx);
         
         // 서점 리스트가 정상적으로 있다면
-        if (result[0].bookstoreIdx !== undefined) {
+        // if (result[0].bookstoreIdx !== undefined) {
+        //     if(bookstores.indexOf(result[0].bookstoreIdx) === -1){
+        //         bookstores.push(result[0].bookstoreIdx);
+        //     }else{
+        //         bookstores.splice(bookstores.indexOf(result[0].bookstoreIdx),1);
+        //         bookstores.push(result[0].bookstoreIdx);
+        //     }
+        // }
+        // console.log('result[0].bookstoreIdx: ', result[0].bookstoreIdx);
+        // if (result[0].bookstoreIdx === undefined) {
+        //     return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
+        // }
+        else{
             if(bookstores.indexOf(result[0].bookstoreIdx) === -1){
                 bookstores.push(result[0].bookstoreIdx);
             }else{
                 bookstores.splice(bookstores.indexOf(result[0].bookstoreIdx),1);
                 bookstores.push(result[0].bookstoreIdx);
             }
-        }
-        
         console.log('result[0] : ',result[0].bookstoreIdx);
         console.log('bookstores <cookies> : ',bookstores);
         res.cookie('bookstores', bookstores, {
@@ -123,6 +136,7 @@ const bookstore = {
                 res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
             }
         }
+    }
         
     },
     showBookstoreFeed: async (req, res) => {
