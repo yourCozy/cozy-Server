@@ -1,7 +1,5 @@
 const MypageModel = require('../models/mypageModel');
-var moment = require('moment');
-require('moment-timezone');
-moment.tz.setDefault("Asia/Seoul");
+
 const statusCode = require('../modules/statusCode');
 const resMessage = require('../modules/resMessage');
 const util = require('../modules/util');
@@ -137,21 +135,11 @@ const mypage = {
         // 로그인하지 않은 상태에서 본 책방은 쿠키에 저장되고 로그인해도 계속 남아있음
         // 로그아웃하고 다른 아이디로 로그인하면 쿠키 삭제되어 있음
         var bookstores = req.cookies.bookstores;
-        
-        // var date = new Date();
-        // var fmt = 'YY.MM.DD HH:mm';
-        // var now = moment(date).format(fmt); //지금
-        // console.log(now);
-        // const oneMonth = moment(date.getTime()).add("1","M").format('YY.MM.DD HH:mm'); //한달 뒤 
-        // console.log(oneMonth);
-       
-        
+
 
         if (!req.cookies.bookstores) {
             return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.NO_RECENT_BOOKSTORES));
         }
-
-        // console.log(bookstores);
         
         // json 객체 담을 배열
         var cookies=[];

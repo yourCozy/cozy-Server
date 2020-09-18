@@ -6,9 +6,6 @@ const pool = require('../modules/pool');
 const { async } = require('../models/bookstoreModel');
 const { text } = require('express');
 
-var moment = require('moment');
-require('moment-timezone');
-moment.tz.setDefault("Asia/Seoul");
 
 const bookstore = {
     showRecommendation : async (req, res) => {
@@ -116,23 +113,9 @@ const bookstore = {
             // maxAge: 60*60*1000*24 //쿠키유효시간 24시간
             maxAge: 30*1000
         });
-<<<<<<< HEAD
         console.log('req.cookies.bookstores: ',req.cookies.bookstores);
         console.log('req.cookies: ',req.cookies);
         console.log('startTime: ', req._startTime);
-=======
-        // var date = new Date();
-        // var fmt = 'YY.MM.DD HH:mm:ss';
-        // var now = moment(date).format(fmt); //지금
-        // var booknow = bookstoreIdx+"\/"+now ;
-        // console.log(booknow);
-        // var ary = [];
-        // ary.push(booknow);
-        // for(var item of ary ){
-        //    console.log(item);
-        //    console.log(ary.length);
-        // }
->>>>>>> juju
 
         if (req.decoded === undefined) {
             // console.log(req.decoded);
