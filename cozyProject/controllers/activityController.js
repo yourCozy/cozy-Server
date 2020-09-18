@@ -84,10 +84,11 @@ const activity = {
         const activityIdx = req.params.activityIdx;
         try{
             const result = await ActivityModel.showActivityDetail(activityIdx);
-            if(result.length==0){
-                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_DATA));
-            }else{
+            
+            if( result.length > 0 ){
                 return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, result));
+            }else{
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_ACT_DATA));
             }
         }catch(err){
             return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));

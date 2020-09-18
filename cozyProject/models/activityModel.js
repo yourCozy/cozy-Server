@@ -114,13 +114,20 @@ const activity = {
                         WHERE activityIdx = '${activityIdx}'`;
         try{
             const deadlineResult = await pool.queryParam(deadlineQuery);
-            // console.log(deadlineResult);
-            const dl = moment(deadlineResult[0].deadline).format('YYYY-MM-DD');
-            // console.log(dl);
-            await pool.queryParam(updateQuery);
-            const result = await pool.queryParam(query);
-            result[0].deadline = dl;
-            return result;
+            console.log(deadlineResult.length);
+            var result;
+            if (deadlineResult.length > 0){
+                const dl = moment(deadlineResult[0].deadline).format('YYYY-MM-DD');
+            // console.log(dl); 
+                await pool.queryParam(updateQuery);
+                result = await pool.queryParam(query);
+                result[0].deadline = dl;
+                return result;
+            }
+            else { 
+                result = 0; 
+                return result;      
+            }
         }catch(err){
             console.log('showActivityDetail ERROR : ', err);
             throw err;
