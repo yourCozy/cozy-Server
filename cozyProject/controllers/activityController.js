@@ -15,13 +15,18 @@ const activity = {
     showActivitiesByBookstore: async (req, res) => {
         // const userIdx = req.decoded.userIdx;
         const bookstoreIdx = req.params.bookstoreIdx;
-        
         try {
             const activitiesByBookstore = await ActivityModel.showActivitiesByBookstore(bookstoreIdx);
             if (activitiesByBookstore.length==0) {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_ACT_DATA));
             }
             else{
+                    for (var item in activitiesByBookstore) {
+                        if ( activitiesByBookstore[item].dday > 300000) {
+                            activitiesByBookstore[item].dday = null;
+                            break;
+                        }
+                    }
                 return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByBookstore));
             }
         } catch (err) {
@@ -58,10 +63,18 @@ const activity = {
 
         try {
             const activitiesByLatest = await ActivityModel.showActivitiesByLatest(categoryIdx);
-            if (!activitiesByLatest.length) {
+            if (activitiesByLatest.length == 0) {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_ACT_DATA));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByLatest));
+            else{
+                for (var item in activitiesByLatest) {
+                    if ( activitiesByLatest[item].dday > 300000) {
+                        activitiesByLatest[item].dday = null;
+                        break;
+                    }
+                }
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByLatest));
+            }
         } catch (err) {
             return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
@@ -74,7 +87,15 @@ const activity = {
             if (!activitiesByDeadline.length) {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_ACT_DATA));
             }
-            else return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByDeadline));
+            else {
+                for (var item in activitiesByDeadline) {
+                    if ( activitiesByDeadline[item].dday > 300000) {
+                        activitiesByDeadline[item].dday = null;
+                        break;
+                    }
+                }
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByDeadline));
+            }
         } catch (err) {
             return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
         }
@@ -86,6 +107,9 @@ const activity = {
             const result = await ActivityModel.showActivityDetail(activityIdx);
             
             if( result.length > 0 ){
+                if ( result[0].dday > 300000) {
+                    result[0].dday = null;
+                }
                 return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, result));
             }else{
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_ACT_DATA));
