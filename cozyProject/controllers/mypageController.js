@@ -150,7 +150,7 @@ const mypage = {
         // console.log('obj : ', obj);
         
         console.log(req.cookies.Expires);
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.RECENT_BOOKSTORES, obj));
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.RECENT_BOOKSTORES, obj.slice(0,10)));
         
     },
 }

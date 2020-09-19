@@ -14,6 +14,7 @@ const bookstore = {
         // TODO: 사용자별로 취향에 따라 검색, 북마크 여부 추가
         // const userQuery =  `SELECT bookstores FROM ${tasteTable} WHERE userIdx = ${userIdx}`;
         const query = `SELECT bs.bookstoreIdx, bs.bookstoreName, bs.mainImg, bs.shortIntro1, bs.shortIntro2, bs.location, bs.hashtag1, bs.hashtag2, bs.hashtag3 FROM ${bookstoreTable} bs
+                        WHERE bs.mainImg is not null
                         ORDER BY bs.bookmark DESC LIMIT 8;`;
                         // bs.profileImg != 'NULL' AND bs.shortIntro1 != 'NULL' 나중에 추가해주기
         try {
@@ -34,6 +35,7 @@ const bookstore = {
         const query = `SELECT bs.bookstoreIdx, bs.bookstoreName, bs.mainImg, bs.shortIntro1, 
         bs.shortIntro2, bs.location, bs.hashtag1, bs.hashtag2, bs.hashtag3
         FROM ${bookstoreTable} bs
+        WHERE bs.mainImg is not null
         ORDER BY bs.bookmark DESC LIMIT 8;`;
         const bookmarkQuery = `SELECT bookstoreIdx from ${bookmarksTable} where userIdx = ${userIdx};`;
         try{
@@ -198,7 +200,10 @@ const bookstore = {
 
         // checked된 책방만 seciton별로
         const query = `SELECT bs.bookstoreIdx, bs.bookstoreName, bs.hashtag1, bs.hashtag2, bs.hashtag3, bs.mainImg from bookstore bs, bookmarks bm
-        where bs.sectionIdx = ${sectionIdx} and bs.bookstoreIdx = bm.bookstoreIdx and bm.userIdx = ${userIdx};`;
+        WHERE bs.mainImg is not null
+        AND bs.sectionIdx = ${sectionIdx} 
+        AND bs.bookstoreIdx = bm.bookstoreIdx 
+        AND bm.userIdx = ${userIdx};`;
 
         // const query = `select bs.bookstoreIdx, bs.bookstoreName, bs.hashtag1, bs.hashtag2, bs.hashtag3, bs.profile, i.image1, bm.checked from ${bookstoreTable} bs, ${imagesTable} i, ${bookmarksTable} bm
         // where bs.sectionIdx = ${sectionIdx} and bs.bookstoreIdx = i.bookstoreIdx and bs.bookstoreIdx = bm.bookstoreIdx;`;
@@ -235,7 +240,8 @@ const bookstore = {
         // SELECT bs.bookstoreIdx, bs.bookstoreName, bs.hashtag1, bs.hashtag2, bs.hashtag3, bs.profileImg, bs.image1 from ${bookstoreTable} bs
         // WHERE bs.sectionIdx = ${sectionIdx};
         const query = `SELECT bookstoreIdx, bookstoreName, location, hashtag1, hashtag2, hashtag3, mainImg from ${bookstoreTable} 
-                        WHERE sectionIdx = ${sectionIdx}`;
+                        WHERE mainImg is not null
+                        AND sectionIdx = ${sectionIdx}`;
         try {
             const result = await pool.queryParam(query);
             result.forEach(element => {
