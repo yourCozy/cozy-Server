@@ -196,12 +196,12 @@ const bookstore = {
     showBookstoresBySection: async (userIdx, sectionIdx) => {
         // location section별로
         const location = `SELECT bs.bookstoreIdx, bs.bookstoreName, bs.location, bs.hashtag1, bs.hashtag2, bs.hashtag3, bs.mainImg from ${bookstoreTable} bs
-                        WHERE bs.sectionIdx = ${sectionIdx};`;
+                        WHERE bs.mainImg is not null
+                        AND bs.sectionIdx = ${sectionIdx};`;
 
         // checked된 책방만 seciton별로
         const query = `SELECT bs.bookstoreIdx, bs.bookstoreName, bs.hashtag1, bs.hashtag2, bs.hashtag3, bs.mainImg from bookstore bs, bookmarks bm
-        WHERE bs.mainImg is not null
-        AND bs.sectionIdx = ${sectionIdx} 
+        WHERE bs.sectionIdx = ${sectionIdx} 
         AND bs.bookstoreIdx = bm.bookstoreIdx 
         AND bm.userIdx = ${userIdx};`;
 
