@@ -256,6 +256,7 @@ const bookstore = {
     showBookstoreNumber: async () => {
         const query = `SELECT sectionIdx, COUNT(bookstoreIdx) AS count 
                         FROM ${bookstoreTable} 
+                        WHERE mainImg is not null
                         GROUP BY sectionIdx
                         ORDER BY sectionIdx`;
         try {
