@@ -28,6 +28,20 @@ const bookstore = {
         const result = await RegisterModel.updateImgOfBookstoreImg(bookstoreIdx, imageLocations);
         res.status(statusCode.OK)
         .send(util.success(statusCode.OK, resMessage.UPDATE_IMAGE_SUCCESS, result));
+    },
+    registerActivityImage: async(req, res)=>{
+        const activityIdx = req.params.activityIdx;
+        let imageLocations=[];
+        for(var i=0;i<10;i++){
+            if(i<req.files.length){
+                imageLocations[i]=req.files[i].location;
+            }else{
+                imageLocations[i]=null;
+            }
+        }
+        const result = await RegisterModel.updateImgOfActivityImg(activityIdx, imageLocations);
+        res.status(statusCode.OK)
+        .send(util.success(statusCode.OK, resMessage.UPDATE_IMAGE_SUCCESS, result));
     }
 }
 
