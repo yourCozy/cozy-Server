@@ -1,4 +1,5 @@
 const MypageModel = require('../models/mypageModel');
+
 const statusCode = require('../modules/statusCode');
 const resMessage = require('../modules/resMessage');
 const util = require('../modules/util');
@@ -134,11 +135,11 @@ const mypage = {
         // 로그인하지 않은 상태에서 본 책방은 쿠키에 저장되고 로그인해도 계속 남아있음
         // 로그아웃하고 다른 아이디로 로그인하면 쿠키 삭제되어 있음
         var bookstores = req.cookies.bookstores;
+
+
         if (!req.cookies.bookstores) {
             return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.NO_RECENT_BOOKSTORES));
         }
-
-        // console.log(bookstores);
         
         // json 객체 담을 배열
         var cookies=[];
@@ -147,11 +148,10 @@ const mypage = {
         }
         var obj =[];
         cookies.forEach(e => obj.push(e[0]));
-        // console.log('obj : ', obj);
+        console.log('obj : ', obj);
         
         console.log(req.cookies.Expires);
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.RECENT_BOOKSTORES, obj.slice(0,10)));
-        
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.RECENT_BOOKSTORES, obj.slice(0,10)));        
     },
 }
 
