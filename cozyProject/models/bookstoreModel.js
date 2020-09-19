@@ -33,10 +33,10 @@ const bookstore = {
     },
     showRecommendationByUser:async (userIdx)=>{
         const query = `SELECT bs.bookstoreIdx, bs.bookstoreName, bs.mainImg, bs.shortIntro1, 
-        bs.shortIntro2, bs.location, bs.hashtag1, bs.hashtag2, bs.hashtag3
-        FROM ${bookstoreTable} bs
-        WHERE bs.mainImg is not null
-        ORDER BY bs.bookmark DESC LIMIT 8;`;
+                        bs.shortIntro2, bs.location, bs.hashtag1, bs.hashtag2, bs.hashtag3
+                        FROM ${bookstoreTable} bs
+                        WHERE bs.mainImg is not null
+                        ORDER BY bs.bookmark DESC LIMIT 8;`;
         const bookmarkQuery = `SELECT bookstoreIdx from ${bookmarksTable} where userIdx = ${userIdx};`;
         try{
             const result = await pool.queryParam(query);
@@ -114,7 +114,9 @@ const bookstore = {
             const bookmarkQuery = `SELECT * FROM ${bookmarksTable} WHERE userIdx = ${userIdx}`;
             const bookmarkResult = await pool.queryParam(bookmarkQuery);
             // console.log(bookmarkResult);
-            let query = `SELECT bookstoreIdx, bookstoreName, mainImg, shortIntro1, shortIntro2, location, hashtag1, hashtag2, hashtag3 FROM ${bookstoreTable} WHERE tasteCount > 0 ORDER BY tasteCount DESC LIMIT 8`;
+            let query = `SELECT bookstoreIdx, bookstoreName, mainImg, shortIntro1, shortIntro2, location, hashtag1, hashtag2, hashtag3 FROM ${bookstoreTable} 
+                        WHERE mainImg is not null
+                        AND tasteCount > 0 ORDER BY tasteCount DESC LIMIT 8`;
             result = await pool.queryParam(query);
 
             for (var i in result) {
