@@ -17,12 +17,12 @@ const activity = {
         // console.log(now);
         const updateQuery = `UPDATE ${activityTable} SET today = '${now}' WHERE bookstoreIdx = ${bookstoreIdx}`;
 
-        const query =  `SELECT activityIdx, activityName, shortIntro, image1, price, DATEDIFF(deadline, today) AS "dday" FROM ${activityTable} 
+        const query =  `SELECT activityIdx, activityName, image1, price, introduction, DATEDIFF(deadline, today) AS "dday" FROM ${activityTable} 
                         WHERE DATEDIFF(deadline, today) >= 0 AND bookstoreIdx = ${bookstoreIdx} 
                         UNION 
-                        SELECT activityIdx, activityName, shortIntro, image1, price, DATEDIFF(deadline, today) AS "dday" FROM ${activityTable} 
+                        SELECT activityIdx, activityName, image1, price, introduction, DATEDIFF(deadline, today) AS "dday" FROM ${activityTable} 
                         WHERE DATEDIFF(deadline, today) < 0 AND bookstoreIdx = ${bookstoreIdx} 
-                        ORDER BY dday DESC;`;      
+                        ORDER BY dday DESC;`;
                         
         try {
             await pool.queryParam(updateQuery);
@@ -33,13 +33,13 @@ const activity = {
             throw err;
         }
     },
-    registerActivity: async (bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image) => {
+    registerActivity: async (bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, introduction, period, deadline, image) => {
         // 사진 개수 필드 추가해야 함. 
         const date = moment().format('YYYY년 M월 D일 HH:mm');
-        const fields = 'bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, createdAt';
+        const fields = 'bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, introduction, period, deadline, image1, image2, image3, image4, image5, image6, image7, image8, image9, image10, createdAt';
         // insert into activity(bookstoreIdx, activityName, categoryIdx, createdAt, deadline) values(1, "공연2", 6, "2020년 8월 22일", '2020-08-31');
-        const values = [bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, shortIntro, introduction, period, deadline, image, date];
-        const questions = '?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?'
+        const values = [bookstoreIdx, activityName, categoryIdx, categoryName, price, limitation, introduction, period, deadline, image, date];
+        const questions = '?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?'
 
         const query = `INSERT INTO ${activityTable}(${fields}) VALUES(${questions})`;
         try {
@@ -59,7 +59,7 @@ const activity = {
         const updateQuery = `UPDATE ${activityTable} SET today = '${now}' WHERE categoryIdx = ${categoryIdx}`;
         //카테고리idx 맞으면 현재 시간 today 로 업데이트
  
-        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image1, DATEDIFF(a.deadline, a.today) AS "dday"
+        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.price, a.image1, DATEDIFF(a.deadline, a.today) AS "dday"
             FROM ${activityTable} a, ${bookstoreTable} bs 
             WHERE a.bookstoreIdx = bs.bookstoreIdx 
             AND a.categoryIdx = ${categoryIdx}
@@ -83,7 +83,7 @@ const activity = {
         // console.log(now);
         const updateQuery = `UPDATE ${activityTable} SET today = '${now}' WHERE categoryIdx = ${categoryIdx}`;
 
-        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image1, DATEDIFF(a.deadline, a.today) AS "dday" 
+        const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.price, a.image1, DATEDIFF(a.deadline, a.today) AS "dday" 
             FROM ${activityTable} a, ${bookstoreTable} bs
             WHERE a.bookstoreIdx = bs.bookstoreIdx
             AND a.categoryIdx = ${categoryIdx} 
