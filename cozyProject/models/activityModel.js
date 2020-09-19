@@ -58,6 +58,7 @@ const activity = {
         // console.log(now);
         const updateQuery = `UPDATE ${activityTable} SET today = '${now}' WHERE categoryIdx = ${categoryIdx}`;
         //카테고리idx 맞으면 현재 시간 today 로 업데이트
+ 
         const query = `SELECT a.activityIdx, bs.bookstoreName, a.activityName, a.shortIntro, a.price, a.image1, DATEDIFF(a.deadline, a.today) AS "dday"
             FROM ${activityTable} a, ${bookstoreTable} bs 
             WHERE a.bookstoreIdx = bs.bookstoreIdx 
