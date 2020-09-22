@@ -110,8 +110,8 @@ const bookstore = {
         console.log('bookstores <cookies> : ',bookstores);
         
         res.cookie('bookstores', bookstores, {
-            // maxAge: 60*60*1000*24 //쿠키유효시간 24시간
-            maxAge: 30*1000
+            maxAge: 60*60*1000*24 //쿠키유효시간 24시간
+            // maxAge: 30*1000
         });
         console.log('req.cookies.bookstores: ',req.cookies.bookstores);
         console.log('req.cookies: ',req.cookies);
