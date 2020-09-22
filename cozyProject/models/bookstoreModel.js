@@ -285,6 +285,7 @@ const bookstore = {
         // 키워드 한 개 검색 가능, 특수문자 가능, 이모티콘 불가능
         const query = `SELECT ${fields} FROM ${bookstoreTable} bs, ${bookstoreImgTable} bi
                         WHERE bs.bookstoreIdx = bi.bookstoreIdx 
+                        AND bs.mainImg is not null
                         AND (binary bs.bookstoreName like "%${keyword}%" 
                         or binary bs.location like "%${keyword}%" 
                         or binary bs.notice like "%${keyword}%" 
@@ -322,6 +323,7 @@ const bookstore = {
         // 키워드 한 개 검색 가능, 특수문자 가능, 이모티콘 불가능
         const query = `SELECT ${fields} FROM ${bookstoreTable} bs, ${bookstoreImgTable} bi
                         WHERE bs.bookstoreIdx = bi.bookstoreIdx 
+                        AND bs.mainImg is not null
                         AND (binary bs.bookstoreName like "%${keyword}%" 
                         or binary bs.location like "%${keyword}%" 
                         or binary bs.notice like "%${keyword}%" 
