@@ -24,7 +24,7 @@ const activity = {
                     for (var item in activitiesByBookstore) {
                         if ( activitiesByBookstore[item].dday > 300000) {
                             activitiesByBookstore[item].dday = null;
-                            break;
+                        
                         }
                     }
                 return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByBookstore));
@@ -70,7 +70,6 @@ const activity = {
                 for (var item in activitiesByLatest) {
                     if ( activitiesByLatest[item].dday > 300000) {
                         activitiesByLatest[item].dday = null;
-                        break;
                     }
                 }
                 return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByLatest));
@@ -91,7 +90,6 @@ const activity = {
                 for (var item in activitiesByDeadline) {
                     if ( activitiesByDeadline[item].dday > 300000) {
                         activitiesByDeadline[item].dday = null;
-                        break;
                     }
                 }
                 return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_ACT_DATA_SUCCESS, activitiesByDeadline));
