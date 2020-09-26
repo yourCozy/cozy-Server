@@ -19,4 +19,9 @@ router.put('/:reviewIdx', AuthMiddleware.checkToken, ReviewController.updateRevi
 
 router.delete('/:reviewIdx', AuthMiddleware.checkToken, ReviewController.deleteReview);
 
+// 간편후기
+router.post('/simple/:bookstoreIdx', AuthMiddleware.checkToken, ReviewController.writeSimpleReview);
+
+router.get('/simple/:reviewIdx', ReviewController.showSimpleReviews); // 후기 제공 범위 어디까지?
+
 module.exports = router;

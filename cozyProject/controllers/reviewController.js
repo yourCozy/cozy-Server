@@ -31,6 +31,7 @@ const review = {
     writeReview : async (req, res) => {
         console.log('writeReview reviewPhoto : ',reviewPhoto);
         const userIdx = req.decoded.userIdx;
+        // const bookstoreIdx = req.params.bookstoreIdx;
         let {bookstoreIdx, content, stars} = req.body;
         try{
             if (!bookstoreIdx || !content || !stars) {
@@ -146,6 +147,41 @@ const review = {
         
         // return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SUCCESS_UPDATE_REVIEW_PHOTO, {photo: reviewPhoto}));
         return reviewPhoto;
+    },
+    writeSimpleReview: async (req, res) => {
+        const userIdx = req.decoded.userIdx;
+        const bookstoreIdx = req.params.bookstoreIdx;
+        let {facilityNum, bookNum, activityNum, foodNum} = req.body;
+        try{
+            if (!bookstoreIdx || !facilityNum || !bookNum || !activityNum || !foodNum) {
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
+            }
+            const result = await ReviewModel.writeSimpleReview(userIdx, bookstoreIdx, facilityNum, bookNum, activityNum, foodNum);
+            
+            if(result === undefined){
+                res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.ERROR_IN_INSERT_REVIEW));
+            }else{
+                res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.INSERT_REVIEW_SUCCESS, 
+                    result[0]
+                ));
+            }
+        }catch(err){
+            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+        }
+    },
+    showSimpleReviews: async (req, res) => {
+        const bookstoreIdx = req.params.bookstoreIdx;
+        try{
+            const result = await ReviewModel.showSimpleReviews(bookstoreIdx);
+            if (result.length === 0) {
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_REVIEW));
+            } else {
+                // TODO: 소수점 값 나오면 반올림? 아니면 그냥 버림해서 정수값만 넘겨주기
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SELECT_REVIEW, result[0]));
+            }
+        } catch (err) {
+            res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+        }
     }
 }
 

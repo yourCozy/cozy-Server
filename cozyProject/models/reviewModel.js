@@ -97,7 +97,7 @@ const review = {
         }
     },
     updateReviewPhoto: async(bookstoreIdx, reviewPhoto) => {
-    let query = `UPDATE ${reviewTable} SET photo = '${reviewPhoto}' WHERE bookstoreIdx = ${bookstoreIdx};`;
+        let query = `UPDATE ${reviewTable} SET photo = '${reviewPhoto}' WHERE bookstoreIdx = ${bookstoreIdx};`;
 
         try {
             const result = await pool.queryParam(query);
@@ -108,6 +108,27 @@ const review = {
                 throw err;
             }
             console.log('update review photo ERROR : ', err);
+            throw err;
+        }
+    },
+    writeSimpleReview: async (userIdx, bookstoreIdx, facilityNum, bookNum, activityNum, foodNum) => {
+        // TODO: 만약 상세후기를 쓴 사용자라면 update, 후기 자체가 처음이라면 update
+        // 이렇게 해주면 상세 후기에서도 null 값이면 후기 안보여주게 처리해주어야 함 or DB review_simple 테이블 따로 만들어주던가
+        const query = `INSERT `;
+    },
+    showSimpleReviews: async (bookstoreIdx) => {
+        const query = `SELECT avg(facilityNum) AS avg_fac, avg(bookNum) AS avg_book, avg(activityNum) AS avg_act, avg(foodNum) AS avg_food
+                        FROM ${reviewTable}`;
+
+        try {
+            const result = await pool.queryParam(query);
+            return result;
+        } catch (err) {
+            if (err.errno == 1062) {
+                console.log('show simple reviews ERROR : ', err.errno, err.code);
+                throw err;
+            }
+            console.log('show simple reviews ERROR : ', err);
             throw err;
         }
     }
