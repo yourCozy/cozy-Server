@@ -157,12 +157,11 @@ const review = {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
             }
             const result = await ReviewModel.writeSimpleReview(userIdx, bookstoreIdx, facilityNum, bookNum, activityNum, foodNum);
-            
-            if(result === undefined){
+            if(result < 0){
                 res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.ERROR_IN_INSERT_REVIEW));
             }else{
                 res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.INSERT_REVIEW_SUCCESS, 
-                    result[0]
+                    {reviewIdx: result}
                 ));
             }
         }catch(err){
@@ -176,8 +175,14 @@ const review = {
             if (result.length === 0) {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_REVIEW));
             } else {
-                // TODO: 소수점 값 나오면 반올림? 아니면 그냥 버림해서 정수값만 넘겨주기
-                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SELECT_REVIEW, result[0]));
+                // 소수점 값 나오면 올림해서 넘겨주기
+                // TODO: 해당없음 고려한 쿼리 다시 짜기
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SELECT_REVIEW, {
+                    avg_fac: Math.ceil(result[0].avg_fac),
+                    avg_book: Math.ceil(result[0].avg_book),
+                    avg_act: Math.ceil(result[0].avg_act),
+                    avg_food: Math.ceil(result[0].avg_food)
+                }));
             }
         } catch (err) {
             res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));

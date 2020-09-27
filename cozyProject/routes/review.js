@@ -22,6 +22,7 @@ router.delete('/:reviewIdx', AuthMiddleware.checkToken, ReviewController.deleteR
 // 간편후기
 router.post('/simple/:bookstoreIdx', AuthMiddleware.checkToken, ReviewController.writeSimpleReview);
 
-router.get('/simple/:reviewIdx', ReviewController.showSimpleReviews); // 후기 제공 범위 어디까지?
+router.get('/simple/:bookstoreIdx', ReviewController.showSimpleReviews); // 후기 제공 범위 어디까지? 아마 모든 사용자~~
+// TODO: 내 간편후기 조회 등 api 필요한지 확인 후 만들기!
 
 module.exports = router;

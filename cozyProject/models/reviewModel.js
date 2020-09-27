@@ -1,5 +1,6 @@
     const pool = require('../modules/pool');
 var moment = require('moment');
+const bookstore = require('./bookstoreModel');
 require('moment-timezone');
 moment.tz.setDefault("Asia/Seoul");
 
@@ -112,13 +113,46 @@ const review = {
         }
     },
     writeSimpleReview: async (userIdx, bookstoreIdx, facilityNum, bookNum, activityNum, foodNum) => {
-        // TODO: 만약 상세후기를 쓴 사용자라면 update, 후기 자체가 처음이라면 update
-        // 이렇게 해주면 상세 후기에서도 null 값이면 후기 안보여주게 처리해주어야 함 or DB review_simple 테이블 따로 만들어주던가
-        const query = `INSERT `;
+        // TODO: 이렇게 해주면 상세 후기에서도 null 값이면 후기 안보여주게 처리해주어야 함 or DB review_simple 테이블 따로 만들어주던가
+        const fields = `userIdx, bookstoreIdx, facilityNum, bookNum, activityNum, foodNum`;
+        const questions = '?, ?, ?, ?, ?, ?';
+        const values = [userIdx, bookstoreIdx, facilityNum, bookNum, activityNum, foodNum];
+        const selectQuery = `SELECT * FROM ${reviewTable} WHERE userIdx = ${userIdx} AND bookstoreIdx = ${bookstoreIdx}`;
+        const insertQuery = `INSERT INTO ${reviewTable}(${fields}) VALUES(${questions})`;
+        const updateQuery = `UPDATE ${reviewTable} 
+                            SET facilityNum = ${facilityNum}, bookNum = ${bookNum}, activityNum = ${activityNum}, foodNum = ${foodNum}
+                            WHERE userIdx = ${userIdx} 
+                            AND bookstoreIdx = ${bookstoreIdx}`;
+
+        try {
+            let result = await pool.queryParam(selectQuery);
+            if (result.length > 0) {
+                console.log("update");
+                await pool.queryParam(updateQuery);
+                result = await pool.queryParam(selectQuery);
+                return result[0].reviewIdx;
+            } else {
+                console.log("insert");
+                result = await pool.queryParamArr(insertQuery, values);
+                reviewIdx = result.insertId;
+                return reviewIdx;
+            }
+        } catch (err) {
+            if (err.errno == 1062) {
+                console.log('write simple review ERROR : ', err.errno, err.code);
+                throw err;
+            }
+            console.log('write simple review ERROR : ', err);
+            throw err;
+        }
+
+        
     },
     showSimpleReviews: async (bookstoreIdx) => {
         const query = `SELECT avg(facilityNum) AS avg_fac, avg(bookNum) AS avg_book, avg(activityNum) AS avg_act, avg(foodNum) AS avg_food
-                        FROM ${reviewTable}`;
+                        FROM ${reviewTable}
+                        WHERE bookstoreIdx = ${bookstoreIdx} 
+                        GROUP BY bookstoreIdx`;
 
         try {
             const result = await pool.queryParam(query);
