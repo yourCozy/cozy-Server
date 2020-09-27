@@ -111,6 +111,9 @@ module.exports = {
     SHOW_MYINFO_SUCCESS : '정보 페이지 조회 성공',
     SHOW_MYINFO_FAIL : '정보 페이지 조회 실패',
     
+    //내 정보 변경
+    NOT_MATCH_EMAIL : '회원가입시 등록한 이메일을 입력해주세요.',
+    UPDATE_PASSWORD : '비밀번호가 변경되었습니다.',
     GET_REFRESH_TOKEN : 'userIdx에 해당하는 refreshToken입니다.',
     DB_ERROR: 'DB 오류'
 

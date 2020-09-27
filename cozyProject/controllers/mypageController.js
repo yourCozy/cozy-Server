@@ -1,8 +1,10 @@
 const MypageModel = require('../models/mypageModel');
 
+const encrypt = require('../modules/crypto');
 const statusCode = require('../modules/statusCode');
 const resMessage = require('../modules/resMessage');
 const util = require('../modules/util');
+const mailer = require('../modules/mailer');
 const e = require('express');
 
 const mypage = {
@@ -153,6 +155,126 @@ const mypage = {
         console.log(req.cookies.Expires);
         return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.RECENT_BOOKSTORES, obj.slice(0,10)));        
     },
+    updateMyinfo: async(req, res)=>{
+        if(req.decoded === undefined){
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.REQUIRE_LOGIN));
+        }else{
+            try {
+                const userIdx = req.decoded.userIdx;
+                const result = await MypageModel.showMyinfo(userIdx);
+                if(result.length==0){
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.READ_PROFILE_FAIL));
+                }else{
+                    console.log('update my info result : ', result[0]);
+                    return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_PROFILE_SUCCESS, result[0]));
+                }
+            } catch (err) {
+                return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            }
+        }
+        
+    },
+    updateProfile: async(req, res)=>{
+        if(req.decoded === undefined){
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.REQUIRE_LOGIN));
+        }else{
+            try{
+                const userIdx = req.decoded.userIdx;
+                const profile = req.file.location;
+                if(profile === undefined){
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
+                }
+                const type = req.file.mimetype.split('/')[1];
+                console.log('type : ', type);
+                if (type !== 'jpeg' && type !== 'jpg' && type !== 'png') {
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.UNSUPPORTED_TYPE));
+                }
+                const result = await MypageModel.updateProfile(userIdx, profile);
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.UPDATE_PROFILE_SUCCESS, result));
+            }catch(err){
+                return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            }
+        }
+    },
+    updateNickname: async(req, res)=>{
+        if(req.decoded === undefined){
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.REQUIRE_LOGIN));
+        }else{
+            try{
+                const userIdx = req.decoded.userIdx;
+                const nickname = req.body.nickname;
+                const result = await MypageModel.updateNickname(userIdx, nickname);
+                if(result === 1){
+                    return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.UPDATE_PROFILE_SUCCESS, {
+                        updatedNickname : nickname
+                    }));
+                }
+            }catch(err){
+                return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            }
+        }
+    },
+    updateTel: async(req, res)=>{
+        if(req.decoded === undefined){
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.REQUIRE_LOGIN));
+        }else{
+            
+        }
+    },
+    sendAuthCode: async(req, res)=>{
+        if(req.decoded === undefined){
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.REQUIRE_LOGIN));
+        }else{
+            try{
+                const userIdx = req.decoded.userIdx;
+                const email=req.body.email;
+                //데이터 누락
+                if(!email){
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
+                }
+                const result = await MypageModel.checkUserByUserIdx(userIdx);
+                if(result[0].email !== email){
+                    //해당 이메일이 db에 없을 때
+                    return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NOT_MATCH_EMAIL));
+                }else{
+                    //해당 이메일이 db에 있을 때
+                    const authCode = Math.floor(Math.random() * (9999 - 1000)) + 1000;
+                    console.log(authCode);
+                    let emailParam = {
+                        toEmail : email,
+                        subject : 'New Email From COZY',
+                        text : `인증번호 : ${authCode}`
+                    };
+                    mailer.sendGmail(emailParam);
+                    return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SEND_EMAIL_SUCCESS, {
+                        authCode: authCode
+                    }));
+                }
+            }catch(err){
+                return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            }
+        }
+    },
+    updatePassword: async(req, res)=>{
+        if(req.decoded === undefined){
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.REQUIRE_LOGIN));
+        }else{
+            try{
+                const userIdx = req.decoded.userIdx;
+                const newPassword = req.body.password;
+                const {
+                    salt,
+                    hashed
+                } = await encrypt.encrypt(newPassword);
+                const result = await MypageModel.updatePassword(userIdx, salt, hashed);
+                if(result===1){
+                    return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.UPDATE_PASSWORD, result));
+                }
+            }catch(err){
+                return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+            }
+        }
+    }
 }
 
 module.exports = mypage;

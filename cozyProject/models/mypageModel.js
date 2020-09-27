@@ -95,7 +95,7 @@ const mypage = {
             const result = await pool.queryParam(query);
             return result;
         } catch (err) {
-            console.log('register recommendation ERROR : ', err);
+            console.log('check user ERROR : ', err);
             throw err;
         }
     },
@@ -127,6 +127,61 @@ const mypage = {
             throw err;
         }
     },
+    showMyinfo: async(userIdx)=>{
+        const query = `select nickname, id, tel, profileImg from ${userTable} where userIdx = ${userIdx};`;
+        try{
+            const result = await pool.queryParam(query);
+            return result;
+        }catch(err){
+            console.log('show my info error : ', err);
+            throw err;
+        }
+    },
+    updateProfile: async(userIdx, profile)=>{
+        const query = `update ${userTable} set profileImg = "${profile}" where userIdx = ${userIdx};`;
+        try{
+            await pool.queryParam(query);
+            const query2 = `select profileImg from ${userTable} where userIdx = ${userIdx};`;
+            const result = await pool.queryParam(query2);
+            return result;
+        }catch(err){
+            console.log('update profile error : ', err);
+            throw err;
+        }
+    },
+    checkUserByUserIdx: async(userIdx)=>{
+        const query = `select email from ${userTable} where userIdx = ${userIdx};`;
+        try{
+            const result = await pool.queryParam(query);
+            return result;
+        }catch(err){
+            console.log('check user by userIdx error : ', err);
+            throw err;
+        }
+    },
+    updateNickname: async(userIdx, nickname)=>{
+        const query = `update ${userTable} set nickname = "${nickname}" where userIdx = ${userIdx};`;
+        try{
+            const result = await pool.queryParam(query);
+            return 1;
+        }catch(err){
+            console.log('update nickname error : ', err);
+            throw err;
+        }
+    },
+    updateTel: async(userIdx, tel)=>{
+        
+    },
+    updatePassword: async(userIdx, salt, hashed)=>{
+        const query = `update ${userTable} set salt = "${salt}", hashed="${hashed}" where userIdx = ${userIdx};`;
+        try{
+            await pool.queryParam(query);
+            return 1;
+        }catch(err){
+            console.log('update password error : ', err);
+            throw err;
+        }
+    }
 }
 
 module.exports = mypage;
