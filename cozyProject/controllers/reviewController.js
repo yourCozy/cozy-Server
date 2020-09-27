@@ -178,6 +178,7 @@ const review = {
                 // 소수점 값 나오면 올림해서 넘겨주기
                 // TODO: 해당없음 고려한 쿼리 다시 짜기
                 return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SELECT_REVIEW, {
+                    bookstoreIdx: bookstoreIdx,
                     avg_fac: Math.ceil(result[0].avg_fac),
                     avg_book: Math.ceil(result[0].avg_book),
                     avg_act: Math.ceil(result[0].avg_act),
