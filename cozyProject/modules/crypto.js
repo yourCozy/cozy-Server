@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const pbkdf2 = require('pbkdf2');
+//비밀번호 해쉬함수와 salt 이용해서 탈취되지 않도록 하는 목적
 
 module.exports = {
     encrypt: async (password) => {

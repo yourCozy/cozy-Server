@@ -21,93 +21,131 @@ const user = {
     },
     checkEmail: async(req, res)=>{
         const {email} = req.body;
+
+        var regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+        
         if(!email){
             return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
+        }
+        //이메일 형식 아닐 시
+        if ( !regExp.test(email) ) {
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NOT_EMAIL_FORM));
         }
         const result = await UserModel.checkUserByEmail(email);
         if(result.length!==0){
             return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.ALREADY_EMAIL));
         }
-        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.AVAILABLE_EMAIL, {email: email}));
+        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.AVAILABLE_EMAIL));
+    },
+    checkAccount: async(req, res)=>{
+        //token으로 확인할지 
+        //코드 추가해야함 !!!!!!!!!
+        if (req.decoded === undefined) { 
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.EMPTY_TOKEN));
+       } else {
+            const userIdx = req.decoded.userIdx;
+            const result = await UserModel.checkAccount(userIdx);
+            if(result.length==0){
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.GET_ACCOUT_FAIL));
+            }
+            return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.GET_ACCOUT_SUCCESS ,{
+                profileImg: user[0].profileImg,
+                tel: user[0].tel,
+            }));
+        }            
     },
     signup : async (req, res) => {
         const {
             nickname,
             email,
             password,
-            passwordConfirm
+            passwordConfirm,
+            tel
         } = req.body;
-        if (!nickname || !password || !email || !passwordConfirm) {
-            return res.status(statusCode.OK)
-                .send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
+        if (!nickname || !email || !password || !passwordConfirm || !tel){
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_SIGNUP_VALUE)); 
         }
-        /*
-        // 사용중인 아이디가 있는지 확인
-        let result = await UserModel.checkUserByName(nickname);
-        
-        if (result.length > 0) {
+        //var regPw = /^[a-zA-Z0-9~!@#$%^&*()_+|<>?:{}]{8,20}$/i;
+        //var regname = /(([a-z])([A-Z])([0-9])([^a-zA-Z0-9가-힣]).{1,10})/i;
+        //이름 정책
+        var regname = /^[a-z0-9A-Zㄱ-ㅎ|ㅏ-ㅣ|가-힣]{1,10}$/;
+        //비밀번호 정책
+        //var regPw = /((?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[^a-zA-Z0-9ㄱ-ㅎ|ㅏ-ㅣ|가-힣]){10,20})$/i;
+        var regPw = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,20}$/i;
+        if ( !regname.test(nickname) ) {
             return res.status(statusCode.OK)
-                .send(util.fail(statusCode.OK, resMessage.ALREADY_ID));
+                .send(util.fail(statusCode.OK, resMessage.NOT_NAME_FORM));
         }
+        const result = await UserModel.checkUserByEmail(email);
+        if(result.length!==0){
+            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.ALREADY_EMAIL));
+        }
+        var regExp = /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
+        if ( !regExp.test(email) ) {
+            return res.status(statusCode.OK)
+                .send(util.fail(statusCode.OK, resMessage.NOT_EMAIL_FORM));
+        } //checkemail에서 확인은 해주긴 함
+        else{
+            if ( !regPw.test(password)) {
+                return res.status(statusCode.OK)
+                .send(util.fail(statusCode.OK, resMessage.NOT_PASSWORD_FORM));
+            }
+            if(password !== passwordConfirm){
+            //비밀번호와 비밀번호 확인이 다르다면
+                return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.DIFFERENT_PW));
+            }
+            //salt, hash이용해서 비밀번호 암호화
+            else{
+                const {
+                    salt,
+                    hashed
+                } = await encrypt.encrypt(password);
 
-        // 사용중인 이메일이 있는지 확인
-        result = await UserModel.checkUserByEmail(email);
-        if (result.length > 0) {
-            return res.status(statusCode.OK)
-                .send(util.fail(statusCode.OK, resMessage.ALREADY_EMAIL));
+               //models.user.js 의 signup 쿼리 이용해서 회원가입 진행
+                const idx = await UserModel.signup(nickname, email, hashed, salt, tel);
+                const user = await UserModel.getUserIdxByEmail(email); 
+                const {token, _} = await jwt.sign(user[0]);
+                if (idx === -1) {
+                    return res.status(statusCode.DB_ERROR)
+                        .send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
+                }
+                console.log(hashed);
+                res.status(statusCode.OK)
+                    .send(util.success(statusCode.OK, resMessage.CREATED_USER, {
+                        userIdx: idx,
+                        jwtToken: token
+                }));
+            }
         }
-        */
-        if(password !== passwordConfirm){
-            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.DIFFERENT_PW));
-        }
-        
-        const {
-            salt,
-            hashed
-        } = await encrypt.encrypt(password);
-
-        const idx = await UserModel.signup(nickname, hashed, salt, email);
-        if (idx === -1) {
-            return res.status(statusCode.DB_ERROR)
-                .send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
-        }
-        console.log(hashed);
-        res.status(statusCode.OK)
-            .send(util.success(statusCode.OK, resMessage.CREATED_USER, {
-                userIdx: idx
-            }));
     },
+    
     signin : async (req, res) => {
         const {
             email,
             password,
             //autoLogin
         } = req.body;
-        
         if (!email || !password) {
             res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
             return;
         }
-    
         // User의 email이 있는지 확인 - 없다면 NO_USER 반납
         const user = await UserModel.checkUserByEmail(email);
-
         // statusCode: 204 => 요청에는 성공했으나 클라가 현재 페이지에서 벗어나지 않아도 된다.~~
         // 페이지는 바뀌지 않는데 리소스는 업데이트될 때 사용
         if (!user[0]) {
+            //회원 없을 시 
             return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_USER));
         }
-
+        else{
         // req의 Password 확인 - 틀렸다면 MISS_MATCH_PW 반납
-        // encrypt 모듈 만들어놓은 거 잘 활용하기!
-        const hashed = await encrypt.encryptWithSalt(password, user[0].salt);
-        // console.log(hashed);
-        // console.log(user[0].password);
-        if (hashed !== user[0].hashed) {
-            return res.status(statusCode.OK)
-            .send(util.fail(statusCode.OK, resMessage.MISS_MATCH_PW));
-        }
-
+            const hashed = await encrypt.encryptWithSalt(password, user[0].salt);
+            if (hashed !== user[0].hashed) { //회원은 있지만 비번 틀렸을 경우
+                return res.status(statusCode.OK)
+                .send(util.fail(statusCode.OK, resMessage.MISS_MATCH_PW));
+            }
+            else{ //회원있고 비번 맞고
+            
         /*
         var expireDate = new Date( Date.now() + 60 * 60 * 1000 * 24 * 7); // 24 hour 7일
 
@@ -124,20 +162,20 @@ const user = {
         // console.log(user[0]);
         // 로그인 성공적으로 마쳤다면 - LOGIN_SUCCESS 전달 
         */
-        const {token, _} = await jwt.sign(user[0]);
+            const {token, _} = await jwt.sign(user[0]);
+            user[0].accessToken = token;
+            res.clearCookie('bookstores');
 
-        user[0].accessToken = token;
-        
-        res.clearCookie('bookstores');
-
-        res.status(statusCode.OK)
-            .send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {
-                userIdx: user[0].userIdx,
-                nickname: user[0].nickname,
-                email: user[0].email,
-                profile: user[0].profile,
-                accessToken: user[0].accessToken
-            }));
+            res.status(statusCode.OK)
+                .send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {
+                    userIdx: user[0].userIdx,
+                    nickname: user[0].nickname,
+                    email: user[0].email,
+                    profile: user[0].profileimg,
+                    accessToken: user[0].accessToken
+                }));
+            }
+        }
     },
     updateImages: async(req, res)=>{
         const bookstoreIdx=req.params.bookstoreIdx;

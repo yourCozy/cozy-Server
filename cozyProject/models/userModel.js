@@ -1,18 +1,19 @@
 const pool = require('../modules/pool');
-const table = 'user';
-const table2 ='bookstore';
-const table3 ='images';
+const usertable = 'user';
+const booktable ='bookstore';
+const imagetable ='images';
 
 const user = {
-    signup: async (nickname, password, salt, email, refreshToken) => {
-        const fields = 'nickname, hashed, salt, email, refreshToken';
+    signup: async (nickname, email, hashed, salt, tel) => {
+        const fields = 'nickname, email, hashed, salt, tel';
         const questions = `?, ?, ?, ?, ?`;
-        const values = [nickname, password, salt, email, refreshToken];
-        const query = `INSERT INTO ${table}(${fields}) VALUES(${questions})`;
+        const values = [nickname, email, hashed, salt, tel];
+        const query = `INSERT INTO ${usertable}(${fields}) VALUES(${questions})`;
         try {
+            //쿼리문 실행, 테이블에 회원 정보 기입하기 
             const result = await pool.queryParamArr(query, values);
-            const insertId = result.insertId;
-            return insertId;
+            const userIdx = result.insertId;
+            return userIdx;
         } catch (err) {
             if (err.errno == 1062) {
                 console.log('signup ERROR : ', err.errno, err.code);
@@ -26,7 +27,7 @@ const user = {
         const fields = 'nickname, id, refreshToken, accessToken';
         const questions = `?, ?, ?, ?`;
         const values = [nickname, id, refreshToken, accessToken];
-        const query = `INSERT INTO ${table}(${fields}) VALUES(${questions})`;
+        const query = `INSERT INTO ${usertable}(${fields}) VALUES(${questions})`;
         try {
             const result = await pool.queryParamArr(query, values);
             const insertId = result.insertId;
@@ -41,7 +42,7 @@ const user = {
         }
     },
     checkUserByNickname: async(nickname)=>{
-        const query = `select * from ${table} where nickname='${nickname}';`;
+        const query = `select * from ${usertable} where nickname='${nickname}';`;
         try{
             const result = await pool.queryParam(query);
             return result;
@@ -54,8 +55,19 @@ const user = {
             throw err;
         }
     },
+    checkAccount : async(userIdx)=>{
+        const query = `select * from ${usertable} where userIdx ='${userIdx}';`;
+        try{
+            const result = await pool.queryParam(query);
+            return result;
+        }catch(err){
+            console.log('checkAccount ERROR : ',err);
+            throw err;
+        }
+    },
     checkUserByEmail: async (email) => {
-        const query = `SELECT * FROM ${table} WHERE email = '${email}';`;
+        // 현재 있는 회원인지 확인
+        const query = `SELECT * FROM ${usertable} WHERE email = '${email}';`;
         try {
             const result = await pool.queryParam(query);
             return result;
@@ -69,7 +81,7 @@ const user = {
         }
     },
     checkUserById: async (id) => {
-        const query = `SELECT * FROM ${table} WHERE id = '${id}';`;
+        const query = `SELECT * FROM ${userable} WHERE id = '${id}';`;
         try {
             const result = await pool.queryParam(query);
             return result;
@@ -83,10 +95,10 @@ const user = {
         }
     },
     updateProfile: async (userIdx, profile) => {
-        let query = `UPDATE ${table} SET profileImg = '${profile}' WHERE userIdx = ${userIdx}`;
+        let query = `UPDATE ${usertable} SET profileImg = '${profile}' WHERE userIdx = ${userIdx}`;
         try {
             await pool.queryParam(query);
-            query = `SELECT userIdx, nickname, email, profileImg FROM ${table} WHERE userIdx = ${userIdx}`;
+            query = `SELECT userIdx, nickname, email, profileImg FROM ${usertable} WHERE userIdx = ${userIdx}`;
             const result = await pool.queryParam(query);
             return result;
         } catch (err) {
@@ -99,10 +111,10 @@ const user = {
         }
     },
     updateImages: async(bookstoreIdx, locations)=>{
-        let query = `insert into ${table3} (bookstoreIdx, image1, image2, image3) values (${bookstoreIdx},'${locations[0]}','${locations[1]}','${locations[2]}')`;
+        let query = `insert into ${imagetable} (bookstoreIdx, image1, image2, image3) values (${bookstoreIdx},'${locations[0]}','${locations[1]}','${locations[2]}')`;
         try{
             await pool.queryParam(query);
-            query=`select * from ${table3} where bookstoreIdx=${bookstoreIdx}`;
+            query=`select * from ${imagetable} where bookstoreIdx=${bookstoreIdx}`;
             const result = await pool.queryParam(query);
             return result;
         }catch(err){
@@ -116,7 +128,7 @@ const user = {
         }
     },
     findUserByEmail: async(userEmail)=>{
-        const query = `select nickname from ${table} where email=${userEmail}`;
+        const query = `select nickname from ${usertable} where email=${userEmail}`;
         try{
             const result = pool.queryParam(query);
             return result;
@@ -126,7 +138,7 @@ const user = {
         }
     },
     updateNewPW: async(email, newhashed, newsalt)=>{
-        const query = `update ${table} set hashed='${newhashed}', salt='${newsalt}' where email='${email}'`;
+        const query = `update ${usertable} set hashed='${newhashed}', salt='${newsalt}' where email='${email}'`;
         try{
             const result = pool.queryParam(query);
             return result;
@@ -136,7 +148,7 @@ const user = {
         }
     },
     getUserIdxByEmail: async(email)=>{
-        const query = `select * from ${table} where email='${email}'`;
+        const query = `select * from ${usertable} where email='${email}'`;
         try{
             const result = pool.queryParam(query);
             return result;
@@ -146,7 +158,7 @@ const user = {
         }
     },
     getUserIdxById: async(id)=>{
-        const query = `select * from ${table} where id='${id}'`;
+        const query = `select * from ${usertable} where id='${id}'`;
         try{
             const result = pool.queryParam(query);
             return result;
@@ -156,7 +168,7 @@ const user = {
         }
     },
     getRefreshTokenByUserIdx: async(userIdx)=>{
-        const query = `select refreshToken from ${table} where userIdx = ${userIdx}`;
+        const query = `select refreshToken from ${usertable} where userIdx = ${userIdx}`;
         try{
             const result = pool.queryParam(query);
             return result;

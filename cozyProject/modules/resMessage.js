@@ -12,12 +12,22 @@ module.exports = {
     AVAILABLE_EMAIL: '가입 가능한 이메일입니다.',
     ALREADY_NICKNAME: '이미 사용중인 닉네임입니다.',
     AVAILABLE_NICKNAME: '사용 가능한 닉네임입니다.',
-    
+    NOT_EMAIL_FORM: '이메일 형식을 확인주세요.',
+    NOT_PASSWORD_FORM: '비밀번호는 영문 숫자 특수문자 포함 10~20자로 입력해주세요.',
+    NOT_NAME_FORM: '이름은 특수문자 제외 글자와 숫자 포함 10자 이내로 입력해주세요.',
+    NOT_CHECK_EMAIL: '이메일 중복확인을 해주세요.',
+    NULL_SIGNUP_VALUE: '입력항목을 확인해주세요.',
+
     // 로그인
     LOGIN_SUCCESS: '로그인 성공',
-    LOGIN_FAIL: '로그인 실패',
+    LOGIN_FAIL: '이메일을 확인해주세요',
     NO_USER: '존재하지 않는 회원입니다.',
-    MISS_MATCH_PW: '비밀번호가 맞지 않습니다.',
+    MISS_MATCH_PW: '비밀번호를 확인해주세요.',
+    NO_USER_PW : 'ID/PW를 확인해주세요',
+
+    //ID/PW 찾기
+    GET_ACCOUT_SUCCESS: '해당 계정 확인 조회 성공', 
+    GET_ACCOUT_FAIL: '해당 계정이 존재하지 않습니다.',
 
     // 인증
     EMPTY_TOKEN: '토큰 값이 없습니다.',
