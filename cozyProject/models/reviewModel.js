@@ -162,26 +162,27 @@ const review = {
         const cntFood2 = `SELECT count(foodNum) AS cnt_food2 FROM ${reviewTable} WHERE bookstoreIdx = ${bookstoreIdx} GROUP BY bookstoreIdx`;
 
         try {
-            const act1Result = await pool.queryParam(cntAct1); // 해당없음 행 개수
-            const act2Result = await pool.queryParam(cntAct2); // 전체 activity 행 개수
-            const food1Result = await pool.queryParam(cntFood1); // 해당없음 행 개수
-            const food2Result = await pool.queryParam(cntFood2); // 전체 food 행 개수
             let result = await pool.queryParam(query);
-            console.log(result);
+            if (result.length > 0) {
+                const act1Result = await pool.queryParam(cntAct1); // 해당없음 행 개수
+                const act2Result = await pool.queryParam(cntAct2); // 전체 activity 행 개수
+                const food1Result = await pool.queryParam(cntFood1); // 해당없음 행 개수
+                const food2Result = await pool.queryParam(cntFood2); // 전체 food 행 개수
 
-            console.log(act2Result[0].cnt_act2 / 2, act1Result[0].cnt_act1, food2Result[0].cnt_food2 / 2, food1Result[0].cnt_food1);
+                // console.log(act2Result[0].cnt_act2 / 2, act1Result[0].cnt_act1, food2Result[0].cnt_food2 / 2, food1Result[0].cnt_food1);
 
-            // if ((act2Result[0].cnt_act2 / 2) >= act1Result[0].cnt_act1 && (food2Result[0].cnt_food2 / 2) >= food1Result[0].cnt_food1) {
-            //     console.log("1: ", result);
-            //     return result;
-            // } 
-            if ((act2Result[0].cnt_act2 / 2) < act1Result[0].cnt_act1) {
-                result[0].avg_act = 0;
-                console.log("2: ",result);
-            } 
-            if ((food2Result[0].cnt_food2 / 2) < food1Result[0].cnt_food1) {
-                console.log("3: ", result);
-                result[0].avg_food = 0;
+                // if ((act2Result[0].cnt_act2 / 2) >= act1Result[0].cnt_act1 && (food2Result[0].cnt_food2 / 2) >= food1Result[0].cnt_food1) {
+                //     console.log("1: ", result);
+                //     return result;
+                // } 
+                if ((act2Result[0].cnt_act2 / 2) < act1Result[0].cnt_act1) {
+                    result[0].avg_act = 0;
+                    console.log("2: ",result);
+                } 
+                if ((food2Result[0].cnt_food2 / 2) < food1Result[0].cnt_food1) {
+                    console.log("3: ", result);
+                    result[0].avg_food = 0;
+                }
             }
             return result;
         } catch (err) {

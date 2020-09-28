@@ -81,7 +81,7 @@ const user = {
         }
     },
     checkUserById: async (id) => {
-        const query = `SELECT * FROM ${userable} WHERE id = '${id}';`;
+        const query = `SELECT * FROM ${usertable} WHERE id = '${id}';`;
         try {
             const result = await pool.queryParam(query);
             return result;
