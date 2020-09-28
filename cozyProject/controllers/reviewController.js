@@ -6,23 +6,28 @@ const util = require('../modules/util');
 const review = {
     showMyReviews : async (req, res) => {
         const userIdx = req.decoded.userIdx;
+        const nickname = req.decoded.nickname;
         try{
             const result = await ReviewModel.showMyReview(userIdx);
             if(result.length === 0){
-                const nickname = await ReviewModel.selectNickname(userIdx);
-                console.log(nickname);
+                // const nickname = await ReviewModel.selectNickname(userIdx);
+                // console.log(nickname);
                 res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.NO_REVIEW, {
-                    reviewIdx: 0,
-                    userIdx: nickname[0].userIdx,
-                    bookstoreIdx: 0,
-                    content: 'NULL',
-                    photo: 'NULL',
-                    stars: 0,
-                    createdAt: 'NULL',
-                    nickname: nickname[0].nickname
+                    reviewIdx: null,
+                    userIdx: userIdx,
+                    bookstoreIdx: null,
+                    content: null,
+                    photo: null,
+                    stars: null,
+                    createdAt: null,
+                    nickname: nickname
                 }));
+            } else {
+                result.forEach(element => {
+                    element.nickname = nickname
+                });
+                res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SELECT_REVIEW, result));
             }
-            res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SELECT_REVIEW, result));
 
         }catch(err){
             res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
@@ -175,14 +180,15 @@ const review = {
             if (result.length === 0) {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_REVIEW));
             } else {
-                // 소수점 값 나오면 올림해서 넘겨주기
-                // TODO: 해당없음 고려한 쿼리 다시 짜기
+                // 소수점 값 나오면 반올림해서 넘겨주기
+                // 0: 해당없음, 1: 별로, 2: 보통, 3: 만족
+                // console.log(result);
                 return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SELECT_REVIEW, {
                     bookstoreIdx: bookstoreIdx,
-                    avg_fac: Math.ceil(result[0].avg_fac),
-                    avg_book: Math.ceil(result[0].avg_book),
-                    avg_act: Math.ceil(result[0].avg_act),
-                    avg_food: Math.ceil(result[0].avg_food)
+                    avg_fac: Math.round(result[0].avg_fac),
+                    avg_book: Math.round(result[0].avg_book),
+                    avg_act: Math.round(result[0].avg_act),
+                    avg_food: Math.round(result[0].avg_food)
                 }));
             }
         } catch (err) {

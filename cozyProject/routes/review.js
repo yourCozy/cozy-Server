@@ -8,7 +8,7 @@ const ReviewController = require('../controllers/reviewController');
 
 // router.get('/two/:bookstoreIdx', ReviewController.showTwoReviewsByBookstore);
 
-// router.get('/:userIdx', AuthMiddleware.checkToken, ReviewController.showMyReviews);
+router.get('/mine', AuthMiddleware.checkToken, ReviewController.showMyReviews);
 
 // 후기 작성 + 사진 등록 한 번에 할 수 있는 방법 없나?
 router.post('/:bookstoreIdx', AuthMiddleware.checkToken, ReviewController.writeReview);

@@ -18,7 +18,8 @@ module.exports = {
             // uuid: user.uuid
         */
         const payload = {
-            userIdx: user.userIdx
+            userIdx: user.userIdx,
+            nickname: user.nickname
         };
         const result = {
             token: jwt.sign(payload, secretKey, options),
