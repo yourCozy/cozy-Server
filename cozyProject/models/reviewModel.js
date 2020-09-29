@@ -169,19 +169,37 @@ const review = {
                 const food1Result = await pool.queryParam(cntFood1); // 해당없음 행 개수
                 const food2Result = await pool.queryParam(cntFood2); // 전체 food 행 개수
 
+                console.log('showSimpleReviews result.length>0: ',act1Result, act2Result, food1Result, food2Result);
+
+
                 // console.log(act2Result[0].cnt_act2 / 2, act1Result[0].cnt_act1, food2Result[0].cnt_food2 / 2, food1Result[0].cnt_food1);
 
                 // if ((act2Result[0].cnt_act2 / 2) >= act1Result[0].cnt_act1 && (food2Result[0].cnt_food2 / 2) >= food1Result[0].cnt_food1) {
                 //     console.log("1: ", result);
                 //     return result;
                 // } 
-                if ((act2Result[0].cnt_act2 / 2) < act1Result[0].cnt_act1) {
-                    result[0].avg_act = 0;
-                    console.log("2: ",result);
+
+                if (act1Result.length > 0) {
+                    if ((act2Result[0].cnt_act2 / 2) < act1Result[0].cnt_act1) {
+                        result[0].avg_act = 0;
+                        console.log("2: ",result);
+                    } 
+                } else {
+                    if ((act2Result[0].cnt_act2 / 2) < 0) {
+                        result[0].avg_act = 0;
+                        console.log("2: ",result);
+                    }
                 } 
-                if ((food2Result[0].cnt_food2 / 2) < food1Result[0].cnt_food1) {
-                    console.log("3: ", result);
-                    result[0].avg_food = 0;
+                if (food1Result.length > 0) {
+                    if ((food2Result[0].cnt_food2 / 2) < food1Result[0].cnt_food1) {
+                        console.log("3: ", result);
+                        result[0].avg_food = 0;
+                    }
+                } else {
+                    if ((food2Result[0].cnt_food2 / 2) < 0) {
+                        console.log("3: ", result);
+                        result[0].avg_food = 0;
+                    }
                 }
             }
             return result;
