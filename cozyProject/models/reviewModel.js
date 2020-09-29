@@ -151,14 +151,14 @@ const review = {
         
     },
     showSimpleReviews: async (bookstoreIdx) => {
-        const query = `SELECT avg(facilityNum) AS avg_fac, avg(bookNum) AS avg_book, avg(nullif(activityNum, 0)) AS avg_act, avg(nullif(foodNum, 0)) AS avg_food
+        const query = `SELECT avg(facilityNum) AS avg_fac, avg(bookNum) AS avg_book, avg(nullif(activityNum, 4)) AS avg_act, avg(nullif(foodNum, 4)) AS avg_food
                         FROM ${reviewTable}
                         WHERE bookstoreIdx = ${bookstoreIdx} 
                         GROUP BY bookstoreIdx`;
 
-        const cntAct1 = `SELECT count(activityNum) AS cnt_act1 FROM ${reviewTable} WHERE activityNum = 0 AND bookstoreIdx = ${bookstoreIdx} GROUP BY bookstoreIdx`;
+        const cntAct1 = `SELECT count(activityNum) AS cnt_act1 FROM ${reviewTable} WHERE activityNum = 4 AND bookstoreIdx = ${bookstoreIdx} GROUP BY bookstoreIdx`;
         const cntAct2 = `SELECT count(activityNum) AS cnt_act2 FROM ${reviewTable} WHERE bookstoreIdx = ${bookstoreIdx} GROUP BY bookstoreIdx`;
-        const cntFood1 = `SELECT count(foodNum) AS cnt_food1 FROM ${reviewTable} WHERE foodNum = 0 AND bookstoreIdx = ${bookstoreIdx} GROUP BY bookstoreIdx`;
+        const cntFood1 = `SELECT count(foodNum) AS cnt_food1 FROM ${reviewTable} WHERE foodNum = 4 AND bookstoreIdx = ${bookstoreIdx} GROUP BY bookstoreIdx`;
         const cntFood2 = `SELECT count(foodNum) AS cnt_food2 FROM ${reviewTable} WHERE bookstoreIdx = ${bookstoreIdx} GROUP BY bookstoreIdx`;
 
         try {
