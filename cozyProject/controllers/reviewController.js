@@ -164,7 +164,7 @@ const review = {
             // const bookstoreIdx = req.params.bookstoreIdx;
             // let {facilityNum, bookNum, activityNum, foodNum} = req.body;
             try{
-                if (!bookstoreIdx || !facilityNum || !bookNum || !activityNum || !foodNum) {
+                if (bookstoreIdx==null || facilityNum==null || bookNum==null || activityNum==null || foodNum==null ) {
                     console.log(bookstoreIdx, facilityNum, bookNum, activityNum, foodNum);
                     return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
                 }
