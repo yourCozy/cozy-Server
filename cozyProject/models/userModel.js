@@ -4,10 +4,10 @@ const booktable ='bookstore';
 const imagetable ='images';
 
 const user = {
-    signup: async (nickname, email, hashed, salt, tel) => {
-        const fields = 'nickname, email, hashed, salt, tel';
-        const questions = `?, ?, ?, ?, ?`;
-        const values = [nickname, email, hashed, salt, tel];
+    signup: async (nickname, email, hashed, salt) => {
+        const fields = 'nickname, email, hashed, salt';
+        const questions = `?, ?, ?, ?`;
+        const values = [nickname, email, hashed, salt];
         const query = `INSERT INTO ${usertable}(${fields}) VALUES(${questions})`;
         try {
             //쿼리문 실행, 테이블에 회원 정보 기입하기 
@@ -81,7 +81,7 @@ const user = {
         }
     },
     checkUserById: async (id) => {
-        const query = `SELECT * FROM ${userable} WHERE id = '${id}';`;
+        const query = `SELECT * FROM ${usertable} WHERE id = '${id}';`;
         try {
             const result = await pool.queryParam(query);
             return result;

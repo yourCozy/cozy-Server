@@ -59,10 +59,9 @@ const user = {
             nickname,
             email,
             password,
-            passwordConfirm,
-            tel
+            passwordConfirm
         } = req.body;
-        if (!nickname || !email || !password || !passwordConfirm || !tel){
+        if (!nickname || !email || !password || !passwordConfirm ){
             return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_SIGNUP_VALUE)); 
         }
         //var regPw = /^[a-zA-Z0-9~!@#$%^&*()_+|<>?:{}]{8,20}$/i;
@@ -102,7 +101,7 @@ const user = {
                 } = await encrypt.encrypt(password);
 
                //models.user.js 의 signup 쿼리 이용해서 회원가입 진행
-                const idx = await UserModel.signup(nickname, email, hashed, salt, tel);
+                const idx = await UserModel.signup(nickname, email, hashed, salt);
                 const user = await UserModel.getUserIdxByEmail(email); 
                 const {token, _} = await jwt.sign(user[0]);
                 if (idx === -1) {
