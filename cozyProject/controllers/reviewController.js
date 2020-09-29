@@ -154,13 +154,15 @@ const review = {
         return reviewPhoto;
     },
     writeSimpleReview: async (req, res) => {
+        const bookstoreIdx = req.params.bookstoreIdx;
+        let {facilityNum, bookNum, activityNum, foodNum} = req.body;
 
         if (req.decoded === undefined) {
             return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.EMPTY_TOKEN));
         } else {
             const userIdx = req.decoded.userIdx;
-            const bookstoreIdx = req.params.bookstoreIdx;
-            let {facilityNum, bookNum, activityNum, foodNum} = req.body;
+            // const bookstoreIdx = req.params.bookstoreIdx;
+            // let {facilityNum, bookNum, activityNum, foodNum} = req.body;
             try{
                 if (!bookstoreIdx || !facilityNum || !bookNum || !activityNum || !foodNum) {
                     console.log(bookstoreIdx, facilityNum, bookNum, activityNum, foodNum);
