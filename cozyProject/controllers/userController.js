@@ -233,7 +233,7 @@ const user = {
             let emailParam = {
                 toEmail : userEmail,
                 subject : 'New Email From COZY',
-                text : `New Password : ${newPW}`
+                text : `COZY 새 비밀번호 입니다! :)\nNew Password : ${newPW}`
             };
             const {
                 salt,
