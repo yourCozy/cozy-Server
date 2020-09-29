@@ -181,24 +181,24 @@ const review = {
 
                 if (act1Result.length > 0) {
                     if ((act2Result[0].cnt_act2 / 2) < act1Result[0].cnt_act1) {
-                        result[0].avg_act = 0;
+                        result[0].avg_act = 4;
                         console.log("2: ",result);
                     } 
                 } else {
                     if ((act2Result[0].cnt_act2 / 2) < 0) {
-                        result[0].avg_act = 0;
+                        result[0].avg_act = 4;
                         console.log("2: ",result);
                     }
                 } 
                 if (food1Result.length > 0) {
                     if ((food2Result[0].cnt_food2 / 2) < food1Result[0].cnt_food1) {
                         console.log("3: ", result);
-                        result[0].avg_food = 0;
+                        result[0].avg_food = 4;
                     }
                 } else {
                     if ((food2Result[0].cnt_food2 / 2) < 0) {
                         console.log("3: ", result);
-                        result[0].avg_food = 0;
+                        result[0].avg_food = 4;
                     }
                 }
             }
