@@ -154,15 +154,15 @@ const review = {
         return reviewPhoto;
     },
     writeSimpleReview: async (req, res) => {
-
+  
         if (req.decoded === undefined) {
             return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.EMPTY_TOKEN));
         } else {
             const userIdx = req.decoded.userIdx;
-            const bookstoreIdx = req.params.bookstoreIdx;
             let {facilityNum, bookNum, activityNum, foodNum} = req.body;
+            const bookstoreIdx = req.params.bookstoreIdx;
             try{
-                if (!bookstoreIdx || !facilityNum || !bookNum || !activityNum || !foodNum) {
+                if ( bookstoreIdx==null || facilityNum==null || bookNum==null || activityNum==null || foodNum==null) {
                     return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
                 }
                 const result = await ReviewModel.writeSimpleReview(userIdx, bookstoreIdx, facilityNum, bookNum, activityNum, foodNum);
