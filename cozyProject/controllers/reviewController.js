@@ -163,6 +163,7 @@ const review = {
             let {facilityNum, bookNum, activityNum, foodNum} = req.body;
             try{
                 if (!bookstoreIdx || !facilityNum || !bookNum || !activityNum || !foodNum) {
+                    console.log(bookstoreIdx, facilityNum, bookNum, activityNum, foodNum);
                     return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
                 }
                 const result = await ReviewModel.writeSimpleReview(userIdx, bookstoreIdx, facilityNum, bookNum, activityNum, foodNum);
