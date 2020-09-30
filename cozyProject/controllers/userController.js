@@ -7,6 +7,11 @@ const jwt = require('../modules/jwt');
 const mailer = require('../modules/mailer');
 const multer = require('../modules/multer');
 
+const cookie = require('cookie-parser');
+
+const secretKey = require('../config/secretKey').secretKey;
+const options = require('../config/secretKey').options;
+
 const user = {
     checkNickname: async (req, res)=>{
         const {nickname} = req.body;
@@ -104,6 +109,7 @@ const user = {
                 const idx = await UserModel.signup(nickname, email, hashed, salt);
                 const user = await UserModel.getUserIdxByEmail(email); 
                 const {token, _} = await jwt.sign(user[0]);
+
                 if (idx === -1) {
                     return res.status(statusCode.DB_ERROR)
                         .send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
@@ -117,7 +123,6 @@ const user = {
             }
         }
     },
-    
     signin : async (req, res) => {
         const {
             email,
@@ -144,25 +149,37 @@ const user = {
             }
             else{ //회원있고 비번 맞고
             
-        /*
-        var expireDate = new Date( Date.now() + 60 * 60 * 1000 * 24 * 7); // 24 hour 7일
+            /*
+            var expireDate = new Date( Date.now() + 60 * 60 * 1000 * 24 * 7); // 24 hour 7일
 
-        // if (req.body.autoLogin === 'checked') {
-        //         console.log("자동로그인 체크!");
-        //     }
+            // if (req.body.autoLogin === 'checked') {
+            //         console.log("자동로그인 체크!");
+            //     }
 
-            res.cookie('autoLogin', {userIdx: user[0].userIdx}, {
-                expires: expireDate
-            });    
-        //     res.cookie('autoLogin', {email: req.body.email, hashed: user[0].hashed}, {
-        //         expires: expireDate
-        //     });    
-        // console.log(user[0]);
-        // 로그인 성공적으로 마쳤다면 - LOGIN_SUCCESS 전달 
-        */
+                res.cookie('autoLogin', {userIdx: user[0].userIdx}, {
+                    expires: expireDate
+                });    
+            //     res.cookie('autoLogin', {email: req.body.email, hashed: user[0].hashed}, {
+            //         expires: expireDate
+            //     });    
+            // console.log(user[0]);
+            // 로그인 성공적으로 마쳤다면 - LOGIN_SUCCESS 전달 
+            */
+
+            // 토큰 인증
             const {token, _} = await jwt.sign(user[0]);
             user[0].accessToken = token;
-            res.clearCookie('bookstores');
+            // 삭제하면 token 값때문에 로그인할때마다 다시 갱신됨;ㅁ;
+            // res.clearCookie('bookstores');
+
+            // 쿠키에 토큰값 저장
+
+            res.cookie('token', token, {
+                maxAge: 30*1000
+            });
+            console.log('req.cookies.token', req.cookies.token);
+            
+
 
             let isLogined = await UserModel.checkIsLogined(email);
             if (isLogined < 1) {
@@ -346,6 +363,14 @@ const user = {
         req.session.destroy();
         console.log('session을 삭제했습니다.');
         res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.DELETE_SESSION));
+    },
+    signOut: async (req, res) => {
+        // 클라이언트 저장소에서 jwt 제거
+        const token = req.headers.token;
+
+        res.clearCookie('token');
+        console.log(req.cookies);
+        res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.LOGOUT_SUCCESS));
     }
 }
 module.exports = user;

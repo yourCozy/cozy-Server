@@ -22,6 +22,8 @@ router.post('/uploadImage/:bookstoreIdx', upload.array('profile'), UserControlle
 
 router.post('/findpw', UserController.findPassword);
 
+router.get('/signout', AuthMiddleware.checkToken, UserController.signOut); // 로그아웃
+
 
 /* 
     ✔️ update profile

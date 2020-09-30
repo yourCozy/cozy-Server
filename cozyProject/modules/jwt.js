@@ -1,6 +1,10 @@
 const randToken = require('rand-token');
 const jwt = require('jsonwebtoken');
 const uuid = require('uuid');
+
+const http = require('http');
+const cookie = require('cookie');
+
 const secretKey = require('../config/secretKey').secretKey;
 const options = require('../config/secretKey').options;
 const refreshOptions = require('../config/secretKey').refreshOptions;
