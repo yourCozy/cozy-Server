@@ -135,8 +135,7 @@ const user = {
         if (!user[0]) {
             //회원 없을 시 
             return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_USER));
-        }
-        else{
+        } else{
         // req의 Password 확인 - 틀렸다면 MISS_MATCH_PW 반납
             const hashed = await encrypt.encryptWithSalt(password, user[0].salt);
             if (hashed !== user[0].hashed) { //회원은 있지만 비번 틀렸을 경우
@@ -165,15 +164,33 @@ const user = {
             user[0].accessToken = token;
             res.clearCookie('bookstores');
 
-            res.status(statusCode.OK)
+            let isLogined = await UserModel.checkIsLogined(email);
+            if (isLogined < 1) {
+                const result = await UserModel.updateIsLogined(email);
+                console.log(result);
+                res.status(statusCode.OK)
                 .send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {
                     userIdx: user[0].userIdx,
                     nickname: user[0].nickname,
                     email: user[0].email,
                     profile: user[0].profileimg,
-                    accessToken: user[0].accessToken
+                    accessToken: user[0].accessToken,
+                    is_logined: 0
                 }));
+            } else {
+                res.status(statusCode.OK)
+                    .send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {
+                        userIdx: user[0].userIdx,
+                        nickname: user[0].nickname,
+                        email: user[0].email,
+                        profile: user[0].profileimg,
+                        accessToken: user[0].accessToken,
+                        is_logined: user[0].is_logined
+                    }));
+                }
             }
+
+            
         }
     },
     updateImages: async(req, res)=>{

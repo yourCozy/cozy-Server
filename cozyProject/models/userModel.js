@@ -130,7 +130,7 @@ const user = {
     findUserByEmail: async(userEmail)=>{
         const query = `select nickname from ${usertable} where email=${userEmail}`;
         try{
-            const result = pool.queryParam(query);
+            const result = await pool.queryParam(query);
             return result;
         }catch(err){
             console.log('find user by email ERR : ',err);
@@ -140,7 +140,7 @@ const user = {
     updateNewPW: async(email, newhashed, newsalt)=>{
         const query = `update ${usertable} set hashed='${newhashed}', salt='${newsalt}' where email='${email}'`;
         try{
-            const result = pool.queryParam(query);
+            const result = await pool.queryParam(query);
             return result;
         }catch(err){
             console.log('update pw by email ERR : ',err);
@@ -150,7 +150,7 @@ const user = {
     getUserIdxByEmail: async(email)=>{
         const query = `select * from ${usertable} where email='${email}'`;
         try{
-            const result = pool.queryParam(query);
+            const result = await pool.queryParam(query);
             return result;
         }catch(err){
             console.log('get userIdx by email ERR : ', err);
@@ -160,7 +160,7 @@ const user = {
     getUserIdxById: async(id)=>{
         const query = `select * from ${usertable} where id='${id}'`;
         try{
-            const result = pool.queryParam(query);
+            const result = await pool.queryParam(query);
             return result;
         }catch(err){
             console.log('get userIdx by email ERR : ', err);
@@ -170,10 +170,39 @@ const user = {
     getRefreshTokenByUserIdx: async(userIdx)=>{
         const query = `select refreshToken from ${usertable} where userIdx = ${userIdx}`;
         try{
-            const result = pool.queryParam(query);
+            const result = await pool.queryParam(query);
             return result;
         }catch(err){
             console.log('get refreshToken by userIdx ERR : ', err);
+            throw err;
+        }
+    },
+    checkIsLogined: async (email) => {
+        const query = `SELECT is_logined FROM ${usertable} WHERE email = '${email}'`;
+        try {
+            const result = await pool.queryParam(query);
+            return result[0].is_logined;
+        } catch (err) {
+            if (err.errno == 1062) {
+                console.log('update islogined ERROR : ', err.errno, err.code);
+                throw err;
+            }
+            console.log('update islogined ERROR : ', err);
+            throw err;
+        }
+    },
+    updateIsLogined: async (email) => {
+        const query = `UPDATE ${usertable} SET is_logined = 1 WHERE email = '${email}'`;
+        try {
+            await pool.queryParam(query);
+            const result = 1;
+            return result;
+        } catch (err) {
+            if (err.errno == 1062) {
+                console.log('update islogined ERROR : ', err.errno, err.code);
+                throw err;
+            }
+            console.log('update islogined ERROR : ', err);
             throw err;
         }
     }
