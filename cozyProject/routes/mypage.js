@@ -26,7 +26,6 @@ router.get('/update/myinfo', AuthMiddleware.checkToken, MypageController.updateM
 //로컬 로그인으로 가입했을 때만 사용 가능
 router.post('/update/profile', AuthMiddleware.checkToken, upload.single('profile'), MypageController.updateProfile);//완료
 router.post('/update/nickname', AuthMiddleware.checkToken, MypageController.updateNickname);//완료
-router.post('/update/tel', AuthMiddleware.checkToken, MypageController.updateTel);
 router.post('/update/password/1', AuthMiddleware.checkToken, MypageController.sendAuthCode);//완료
 router.post('/update/password/2', AuthMiddleware.checkToken, MypageController.updatePassword);//완료
 
