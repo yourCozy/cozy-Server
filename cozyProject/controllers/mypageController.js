@@ -165,7 +165,6 @@ const mypage = {
                 if(result.length==0){
                     return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.READ_PROFILE_FAIL));
                 }else{
-                    console.log('update my info result : ', result[0]);
                     return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_PROFILE_SUCCESS, result[0]));
                 }
             } catch (err) {
@@ -190,7 +189,7 @@ const mypage = {
                     return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.UNSUPPORTED_TYPE));
                 }
                 const result = await MypageModel.updateProfile(userIdx, profile);
-                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.UPDATE_PROFILE_SUCCESS, result));
+                return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.UPDATE_PROFILE_SUCCESS, result[0]));
             }catch(err){
                 return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
             }
@@ -212,13 +211,6 @@ const mypage = {
             }catch(err){
                 return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
             }
-        }
-    },
-    updateTel: async(req, res)=>{
-        if(req.decoded === undefined){
-            return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.REQUIRE_LOGIN));
-        }else{
-            
         }
     },
     sendAuthCode: async(req, res)=>{
