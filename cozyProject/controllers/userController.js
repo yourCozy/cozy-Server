@@ -367,9 +367,15 @@ const user = {
     signOut: async (req, res) => {
         // 클라이언트 저장소에서 jwt 제거
         const token = req.headers.token;
+        console.log(token);
+        let decoded = await jwt.verify(token);
+        console.log('decoded: ', decoded.exp);
 
+        // await jwt.encode({'exp': datetime.utcnow()}, secretKey);
+        
+        // redis or mongoDB 에 로그인 정보 저장해두었다가 로그아웃시 삭제하는 식으로 구현해야 함.
         res.clearCookie('token');
-        console.log(req.cookies);
+        console.log(req.cookies.token);
         res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.LOGOUT_SUCCESS));
     }
 }

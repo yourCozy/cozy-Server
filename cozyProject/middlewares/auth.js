@@ -12,6 +12,10 @@ const authUtil = {
             next();
         } else {
             var token = req.headers.token;
+            // 로그아웃 한 번 실행 시 그대로 쿠키에 토큰값 남아있음. 두번 해줘야 clear됨..
+            if (req.cookies.token === undefined) {
+                return res.json(util.fail(CODE.OK, MSG.EXPIRED_TOKEN));
+            }
             if (!token) {
                 return res.json(util.fail(CODE.OK, MSG.EMPTY_TOKEN));
             }
