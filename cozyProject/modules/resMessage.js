@@ -26,6 +26,8 @@ module.exports = {
     NO_USER_PW : 'ID/PW를 확인해주세요',
 
     // 로그아웃
+    SESSION_NOT_DESTROYED: '세션 만료 실패',
+    SESSION_DESTROYED: '세션 만료. 로그아웃 성공',
     LOGOUT_SUCCESS: '로그아웃 성공',
 
     //ID/PW 찾기

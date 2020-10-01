@@ -4,6 +4,15 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+/**
+ * redis: Redis DB 사용
+ * express-session: express에서 세션 관리하기 위한 라이브러리
+ * connect-redis: redis DB를 세션 관리에 사용할 수 있도록 저장소를 연결시켜 줌.
+ */
+var redis = require('redis');
+var session = require('express-session');
+var redisStore = require('connect-redis')(session);
+
 //const session = require('express-session');
 //const MySQLStore = require('express-mysql-session')(session);
 //const MySQLInfo = require('./config/database.json');
@@ -12,6 +21,24 @@ var indexRouter = require('./routes/index');
 // var usersRouter = require('./routes/users');
 
 var app = express();
+
+/**
+ * redis 세션 관리
+ *  */
+// Redis 서버 연결 설정
+var client = redis.createClient(6379, 'localhost');
+
+app.use(session({
+  secret: 'SeCrEt',
+  // Redis 서버의 설정정보
+  store: new redisStore({
+    client: client,
+    ttl: 260
+  }),
+  saveUninitialized: false,
+  resave: false
+}));
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
