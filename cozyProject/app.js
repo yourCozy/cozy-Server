@@ -22,22 +22,22 @@ var indexRouter = require('./routes/index');
 
 var app = express();
 
-/**
- * redis 세션 관리
- *  */
-// Redis 서버 연결 설정
-var client = redis.createClient(6379, 'localhost');
+// /**
+//  * redis 세션 관리
+//  *  */
+// // Redis 서버 연결 설정
+// var client = redis.createClient(6379, 'localhost');
 
-app.use(session({
-  secret: 'SeCrEt',
-  // Redis 서버의 설정정보
-  store: new redisStore({
-    client: client,
-    ttl: 260
-  }),
-  saveUninitialized: false,
-  resave: false
-}));
+// app.use(session({
+//   secret: 'SeCrEt',
+//   // Redis 서버의 설정정보
+//   store: new redisStore({
+//     client: client,
+//     ttl: 260
+//   }),
+//   saveUninitialized: false,
+//   resave: false
+// }));
 
 
 // view engine setup

@@ -11,9 +11,6 @@ const cookie = require('cookie-parser');
 
 const session = require('express-session');
 
-const secretKey = require('../config/secretKey').secretKey;
-const options = require('../config/secretKey').options;
-
 const user = {
     checkNickname: async (req, res)=>{
         const {nickname} = req.body;
@@ -174,18 +171,18 @@ const user = {
             // 삭제하면 token 값때문에 로그인할때마다 다시 갱신됨;ㅁ;
             // res.clearCookie('bookstores');
 
-            // 세션에 토큰값 저장
-            console.log('req.session: ',req.session);
-            console.log('token', token);
-            if (req.session.token) {
-                console.log('session valid...(', req.session.key, ')');
-                console.log('session valid');
-            } else {
-                console.log('else 로 들어왔다');
-                req.session.token = token; // token 값으로 세션에 (key=token)값 저장
-                console.log('session save success...(', req.session.key, ')');
-                console.log('session save success');
-            }
+            // // 세션에 토큰값 저장
+            // console.log('req.session: ',req.session);
+            // console.log('token', token);
+            // if (req.session.token) {
+            //     console.log('session valid...(', req.session.key, ')');
+            //     console.log('session valid');
+            // } else {
+            //     console.log('else 로 들어왔다');
+            //     req.session.token = token; // token 값으로 세션에 (key=token)값 저장
+            //     console.log('session save success...(', req.session.key, ')');
+            //     console.log('session save success');
+            // }
 
             let isLogined = await UserModel.checkIsLogined(email);
             if (isLogined < 1) {
@@ -375,15 +372,15 @@ const user = {
         // res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.LOGOUT_SUCCESS));
 
         // 세션 삭제
-        req.session.destroy(function (err) {
-            if (err) {
-                console.log(err);
-                res.status(statusCode.BAD_REQUEST).send(util.false(statusCode.BAD_REQUEST, resMessage.SESSION_NOT_DESTROYED));
-            } else {
-                console.log('session destroyed success...');
-                res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SESSION_DESTROYED));
-            }
-        })
+        // req.session.destroy(function (err) {
+        //     if (err) {
+        //         console.log(err);
+        //         res.status(statusCode.BAD_REQUEST).send(util.false(statusCode.BAD_REQUEST, resMessage.SESSION_NOT_DESTROYED));
+        //     } else {
+        //         console.log('session destroyed success...');
+        //         res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SESSION_DESTROYED));
+        //     }
+        // })
     },
     checkSession: async (req, res) => {
         if (req.session.token) {
