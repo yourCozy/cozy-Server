@@ -131,6 +131,7 @@ const mypage = {
         const query = `select nickname, profileImg from ${userTable} where userIdx = ${userIdx};`;
         try{
             const result = await pool.queryParam(query);
+            console.log(result);
             return result;
         }catch(err){
             console.log('show my info error : ', err);
