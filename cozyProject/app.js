@@ -9,9 +9,9 @@ var logger = require('morgan');
  * express-session: express에서 세션 관리하기 위한 라이브러리
  * connect-redis: redis DB를 세션 관리에 사용할 수 있도록 저장소를 연결시켜 줌.
  */
-var redis = require('redis');
+//var redis = require('redis');
 var session = require('express-session');
-var redisStore = require('connect-redis')(session);
+//var redisStore = require('connect-redis')(session);
 
 //const session = require('express-session');
 //const MySQLStore = require('express-mysql-session')(session);
