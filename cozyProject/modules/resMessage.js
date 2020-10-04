@@ -25,6 +25,11 @@ module.exports = {
     MISS_MATCH_PW: '비밀번호를 확인해주세요.',
     NO_USER_PW : 'ID/PW를 확인해주세요',
 
+    // 로그아웃
+    SESSION_NOT_DESTROYED: '세션 만료 실패',
+    SESSION_DESTROYED: '세션 만료. 로그아웃 성공',
+    LOGOUT_SUCCESS: '로그아웃 성공',
+
     //ID/PW 찾기
     GET_ACCOUT_SUCCESS: '해당 계정 확인 조회 성공', 
     GET_ACCOUT_FAIL: '해당 계정이 존재하지 않습니다.',

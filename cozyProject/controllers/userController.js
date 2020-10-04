@@ -7,6 +7,10 @@ const jwt = require('../modules/jwt');
 const mailer = require('../modules/mailer');
 const multer = require('../modules/multer');
 
+const cookie = require('cookie-parser');
+
+const session = require('express-session');
+
 const user = {
     checkNickname: async (req, res)=>{
         const {nickname} = req.body;
@@ -104,6 +108,7 @@ const user = {
                 const idx = await UserModel.signup(nickname, email, hashed, salt);
                 const user = await UserModel.getUserIdxByEmail(email); 
                 const {token, _} = await jwt.sign(user[0]);
+
                 if (idx === -1) {
                     return res.status(statusCode.DB_ERROR)
                         .send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
@@ -117,7 +122,6 @@ const user = {
             }
         }
     },
-    
     signin : async (req, res) => {
         const {
             email,
@@ -135,8 +139,7 @@ const user = {
         if (!user[0]) {
             //회원 없을 시 
             return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_USER));
-        }
-        else{
+        } else{
         // req의 Password 확인 - 틀렸다면 MISS_MATCH_PW 반납
             const hashed = await encrypt.encryptWithSalt(password, user[0].salt);
             if (hashed !== user[0].hashed) { //회원은 있지만 비번 틀렸을 경우
@@ -145,34 +148,66 @@ const user = {
             }
             else{ //회원있고 비번 맞고
             
-        /*
-        var expireDate = new Date( Date.now() + 60 * 60 * 1000 * 24 * 7); // 24 hour 7일
+            /*
+            var expireDate = new Date( Date.now() + 60 * 60 * 1000 * 24 * 7); // 24 hour 7일
 
-        // if (req.body.autoLogin === 'checked') {
-        //         console.log("자동로그인 체크!");
-        //     }
+            // if (req.body.autoLogin === 'checked') {
+            //         console.log("자동로그인 체크!");
+            //     }
 
-            res.cookie('autoLogin', {userIdx: user[0].userIdx}, {
-                expires: expireDate
-            });    
-        //     res.cookie('autoLogin', {email: req.body.email, hashed: user[0].hashed}, {
-        //         expires: expireDate
-        //     });    
-        // console.log(user[0]);
-        // 로그인 성공적으로 마쳤다면 - LOGIN_SUCCESS 전달 
-        */
+                res.cookie('autoLogin', {userIdx: user[0].userIdx}, {
+                    expires: expireDate
+                });    
+            //     res.cookie('autoLogin', {email: req.body.email, hashed: user[0].hashed}, {
+            //         expires: expireDate
+            //     });    
+            // console.log(user[0]);
+            // 로그인 성공적으로 마쳤다면 - LOGIN_SUCCESS 전달 
+            */
+
+            // 토큰 인증
             const {token, _} = await jwt.sign(user[0]);
             user[0].accessToken = token;
-            res.clearCookie('bookstores');
+            // 삭제하면 token 값때문에 로그인할때마다 다시 갱신됨;ㅁ;
+            // res.clearCookie('bookstores');
 
-            res.status(statusCode.OK)
+            // // 세션에 토큰값 저장
+            // console.log('req.session: ',req.session);
+            // console.log('token', token);
+            // if (req.session.token) {
+            //     console.log('session valid...(', req.session.key, ')');
+            //     console.log('session valid');
+            // } else {
+            //     console.log('else 로 들어왔다');
+            //     req.session.token = token; // token 값으로 세션에 (key=token)값 저장
+            //     console.log('session save success...(', req.session.key, ')');
+            //     console.log('session save success');
+            // }
+
+            let isLogined = await UserModel.checkIsLogined(email);
+            if (isLogined < 1) {
+                const result = await UserModel.updateIsLogined(email);
+                console.log(result);
+                res.status(statusCode.OK)
                 .send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {
                     userIdx: user[0].userIdx,
                     nickname: user[0].nickname,
                     email: user[0].email,
                     profile: user[0].profileimg,
-                    accessToken: user[0].accessToken
+                    accessToken: user[0].accessToken,
+                    is_logined: 0
                 }));
+            } else {
+                res.status(statusCode.OK)
+                    .send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {
+                        userIdx: user[0].userIdx,
+                        nickname: user[0].nickname,
+                        email: user[0].email,
+                        profile: user[0].profileimg,
+                        accessToken: user[0].accessToken,
+                        is_logined: user[0].is_logined
+                    }));
+                }
             }
         }
     },
@@ -329,6 +364,31 @@ const user = {
         req.session.destroy();
         console.log('session을 삭제했습니다.');
         res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.DELETE_SESSION));
+    },
+    signOut: async (req, res) => {
+        // redis or mongoDB 에 로그인 정보 저장해두었다가 로그아웃시 삭제하는 식으로 구현해야 함.
+        // res.clearCookie('token');
+        // console.log(req.cookies.token);
+        // res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.LOGOUT_SUCCESS));
+
+        // 세션 삭제
+        // req.session.destroy(function (err) {
+        //     if (err) {
+        //         console.log(err);
+        //         res.status(statusCode.BAD_REQUEST).send(util.false(statusCode.BAD_REQUEST, resMessage.SESSION_NOT_DESTROYED));
+        //     } else {
+        //         console.log('session destroyed success...');
+        //         res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SESSION_DESTROYED));
+        //     }
+        // })
+    },
+    checkSession: async (req, res) => {
+        if (req.session.token) {
+            console.log('session valid: ', req.session.token);
+            res.send('session valid');
+        } else {
+            res.send('session is not valid');
+        }
     }
 }
 module.exports = user;

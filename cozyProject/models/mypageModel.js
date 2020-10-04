@@ -128,9 +128,10 @@ const mypage = {
         }
     },
     showMyinfo: async(userIdx)=>{
-        const query = `select nickname, id, tel, profileImg from ${userTable} where userIdx = ${userIdx};`;
+        const query = `select nickname, profileImg from ${userTable} where userIdx = ${userIdx};`;
         try{
             const result = await pool.queryParam(query);
+            console.log(result);
             return result;
         }catch(err){
             console.log('show my info error : ', err);
@@ -168,9 +169,6 @@ const mypage = {
             console.log('update nickname error : ', err);
             throw err;
         }
-    },
-    updateTel: async(userIdx, tel)=>{
-        
     },
     updatePassword: async(userIdx, salt, hashed)=>{
         const query = `update ${userTable} set salt = "${salt}", hashed="${hashed}" where userIdx = ${userIdx};`;
