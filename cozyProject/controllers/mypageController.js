@@ -166,7 +166,20 @@ const mypage = {
                 if(result.length==0){
                     return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.READ_PROFILE_FAIL));
                 }else{
-                    return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_PROFILE_SUCCESS, result[0]));
+                    if(result[0].salt==''){//소셜 사용자
+                        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_PROFILE_SUCCESS, {
+                            nickname:result[0].nickname,
+                            profileImg:result[0].profileImg,
+                            checked:1
+                        }));
+                    }else{//로컬 사용자
+                        return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.READ_PROFILE_SUCCESS, {
+                            nickname:result[0].nickname,
+                            profileImg:result[0].profileImg,
+                            checked:0
+                        }));
+                    }
+                    
                 }
             } catch (err) {
                 return res.status(statusCode.DB_ERROR).send(util.fail(statusCode.DB_ERROR, resMessage.DB_ERROR));
