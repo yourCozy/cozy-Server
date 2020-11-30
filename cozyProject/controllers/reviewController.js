@@ -191,7 +191,7 @@ const review = {
                 return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NO_REVIEW));
             } else {
                 // 소수점 값 나오면 반올림해서 넘겨주기
-                // 0: 해당없음, 1: 별로, 2: 보통, 3: 만족
+                // 1: 별로, 2: 보통, 3: 만족, 4: 해당 없음
                 // console.log(result);
                 return res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SELECT_REVIEW, {
                     bookstoreIdx: bookstoreIdx,

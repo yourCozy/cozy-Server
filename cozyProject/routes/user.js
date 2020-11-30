@@ -22,11 +22,7 @@ router.post('/uploadImage/:bookstoreIdx', upload.array('profile'), UserControlle
 
 router.post('/findpw', UserController.findPassword);
 
-router.get('/signout', AuthMiddleware.checkToken, UserController.signOut); // 로그아웃
-// 로그아웃 시 로그인창으로 redirect 해주는 식으로 보완
-
-// router.get('/check/session', UserController.checkSession); // 세션 체크
-
+// 로그아웃은 클라에서 처리
 
 /* 
     ✔️ update profile

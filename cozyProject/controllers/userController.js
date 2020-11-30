@@ -364,31 +364,6 @@ const user = {
         req.session.destroy();
         console.log('session을 삭제했습니다.');
         res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.DELETE_SESSION));
-    },
-    signOut: async (req, res) => {
-        // redis or mongoDB 에 로그인 정보 저장해두었다가 로그아웃시 삭제하는 식으로 구현해야 함.
-        // res.clearCookie('token');
-        // console.log(req.cookies.token);
-        // res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.LOGOUT_SUCCESS));
-
-        // 세션 삭제
-        // req.session.destroy(function (err) {
-        //     if (err) {
-        //         console.log(err);
-        //         res.status(statusCode.BAD_REQUEST).send(util.false(statusCode.BAD_REQUEST, resMessage.SESSION_NOT_DESTROYED));
-        //     } else {
-        //         console.log('session destroyed success...');
-        //         res.status(statusCode.OK).send(util.success(statusCode.OK, resMessage.SESSION_DESTROYED));
-        //     }
-        // })
-    },
-    checkSession: async (req, res) => {
-        if (req.session.token) {
-            console.log('session valid: ', req.session.token);
-            res.send('session valid');
-        } else {
-            res.send('session is not valid');
-        }
     }
 }
 module.exports = user;

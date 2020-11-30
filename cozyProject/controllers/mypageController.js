@@ -234,6 +234,8 @@ const mypage = {
             try{
                 const userIdx = req.decoded.userIdx;
                 const email=req.body.email;
+                console.log('email:', email);
+                
                 //데이터 누락
                 if(!email){
                     return res.status(statusCode.OK).send(util.fail(statusCode.OK, resMessage.NULL_VALUE));
