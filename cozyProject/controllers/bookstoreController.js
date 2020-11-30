@@ -6,10 +6,14 @@ const pool = require('../modules/pool');
 const { async } = require('../models/bookstoreModel');
 const { text } = require('express');
 
+var moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
 
 const bookstore = {
     showRecommendation : async (req, res) => {
         // 로그인 하지 않은 사용자를 위한 추천뷰, 토큰 인증 필요없음.
+        console.log("time: ", moment());
         console.log(req.decoded);
 
         if (req.decoded === undefined) {
