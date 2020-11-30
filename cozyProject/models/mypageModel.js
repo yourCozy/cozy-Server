@@ -128,9 +128,10 @@ const mypage = {
         }
     },
     showMyinfo: async(userIdx)=>{
-        const query = `select nickname, profileImg from ${userTable} where userIdx = ${userIdx};`;
+        const query = `select nickname, profileImg, salt from ${userTable} where userIdx = ${userIdx};`;
         try{
             const result = await pool.queryParam(query);
+            console.log(result);
             return result;
         }catch(err){
             console.log('show my info error : ', err);
