@@ -10,6 +10,11 @@ const multer = require('../modules/multer');
 const cookie = require('cookie-parser');
 
 const session = require('express-session');
+const { now } = require('moment');
+
+var moment = require('moment');
+require('moment-timezone');
+moment.tz.setDefault("Asia/Seoul");
 
 const user = {
     checkNickname: async (req, res)=>{
@@ -188,6 +193,7 @@ const user = {
             if (isLogined < 1) {
                 const result = await UserModel.updateIsLogined(email);
                 console.log(result);
+                console.log(moment());
                 res.status(statusCode.OK)
                 .send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {
                     userIdx: user[0].userIdx,
@@ -198,6 +204,7 @@ const user = {
                     is_logined: 0
                 }));
             } else {
+                console.log(moment());
                 res.status(statusCode.OK)
                     .send(util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {
                         userIdx: user[0].userIdx,
